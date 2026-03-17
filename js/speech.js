@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ── SPEECH ENGINE — Optimized for best browser voice quality ──
 let currentUtterance = null;
 let activeMsgBtn = null;
@@ -68,11 +69,44 @@ function getBestVoice(langCode) {
   }
 
   // 2. Try partial name match (e.g. "Google" voices)
+=======
+// ── ADVANCED SPEECH ENGINE (UPGRADED) ──
+
+let currentUtterance = null;
+let activeMsgBtn = null;
+let allVoices = [];
+let isPaused = false;
+
+// ── VOICE PRIORITY ──
+const VOICE_PRIORITY = {
+  'en': ['Google UK English Female', 'Google US English', 'Samantha', 'Microsoft Zira'],
+  'hi': ['Google हिन्दी', 'Microsoft Hemant'],
+  'ml': ['Google Malayalam'],
+};
+
+// ── LANGUAGE PARAMS ──
+const LANG_PARAMS = {
+  'en': { rate: 0.92, pitch: 1.0, volume: 1.0 },
+  'hi': { rate: 0.85, pitch: 0.95, volume: 1.0 },
+  'ml': { rate: 0.80, pitch: 0.95, volume: 1.0 },
+};
+
+// ── LOAD VOICES ──
+function loadVoices() {
+  allVoices = window.speechSynthesis.getVoices();
+}
+
+// ── GET BEST VOICE ──
+function getBestVoice(langCode) {
+  const preferred = VOICE_PRIORITY[langCode] || VOICE_PRIORITY['en'];
+
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   for (const name of preferred) {
     const v = allVoices.find(v => v.name.includes(name));
     if (v) return v;
   }
 
+<<<<<<< HEAD
   // 3. Try any Google voice for this language
   const googleV = allVoices.find(v => v.name.startsWith('Google') && v.lang.startsWith(langCode));
   if (googleV) return googleV;
@@ -129,10 +163,55 @@ function speakText(text, opts = {}) {
     .replace(/[\u{1F300}-\u{1FFFF}]/gu, '')  // remove emoji
     .replace(/[🌳🌴🎋🌲🥭🌿🌸🌵]/g, '')
     .replace(/[•·→←↗]/g, ',')               // replace bullets with pauses
+=======
+  return allVoices.find(v => v.lang.startsWith(langCode))
+    || allVoices.find(v => v.lang.startsWith('en'))
+    || allVoices[0];
+}
+
+// ── STOP SPEECH ──
+function stopSpeech() {
+  speechSynthesis.cancel();
+  currentUtterance = null;
+  isPaused = false;
+
+  updateVoiceUI("stopped");
+
+  // stop nature sounds
+  if (typeof stopNatureSounds === 'function' && window.naturePlaying) {
+    stopNatureSounds();
+  }
+}
+
+// ── PAUSE / RESUME ──
+function togglePauseSpeech() {
+  if (!currentUtterance) return;
+
+  if (speechSynthesis.paused) {
+    speechSynthesis.resume();
+    isPaused = false;
+    updateVoiceUI("playing");
+  } else {
+    speechSynthesis.pause();
+    isPaused = true;
+    updateVoiceUI("paused");
+  }
+}
+
+// ── MAIN SPEAK FUNCTION ──
+function speakText(text, opts = {}) {
+  if (!('speechSynthesis' in window)) return;
+
+  stopSpeech();
+
+  const cleanText = text
+    .replace(/[\u{1F300}-\u{1FFFF}]/gu, '')
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
     .replace(/\s+/g, ' ')
     .trim();
 
   const langCode = opts.lang || 'en';
+<<<<<<< HEAD
   const params   = LANG_PARAMS[langCode] || LANG_PARAMS['en'];
 
   const utt    = new SpeechSynthesisUtterance(cleanText);
@@ -188,3 +267,76 @@ function showAvailableVoices() {
 // ── LOAD VOICES ──
 window.speechSynthesis.onvoiceschanged = loadVoices;
 setTimeout(loadVoices, 500); // fallback for browsers that don't fire onvoiceschanged
+=======
+  const params = LANG_PARAMS[langCode] || LANG_PARAMS['en'];
+
+  const utt = new SpeechSynthesisUtterance(cleanText);
+  utt.rate = opts.rate ?? params.rate;
+  utt.pitch = opts.pitch ?? params.pitch;
+  utt.volume = opts.volume ?? params.volume;
+
+  const voice = getBestVoice(langCode);
+  if (voice) {
+    utt.voice = voice;
+    utt.lang = voice.lang;
+  }
+
+  currentUtterance = utt;
+  isPaused = false;
+
+  utt.onstart = () => {
+    updateVoiceUI("playing");
+
+    if (typeof startNatureSounds === 'function') {
+      startNatureSounds(0.3);
+    }
+  };
+
+  utt.onend = () => {
+    currentUtterance = null;
+    isPaused = false;
+    updateVoiceUI("stopped");
+  };
+
+  utt.onerror = () => {
+    currentUtterance = null;
+    updateVoiceUI("stopped");
+  };
+
+  setTimeout(() => speechSynthesis.speak(utt), 100);
+}
+
+// ── UI CONTROL (IMPORTANT) ──
+function updateVoiceUI(state) {
+  const btn = document.getElementById("voiceBtn");
+
+  if (!btn) return;
+
+  if (state === "playing") {
+    btn.innerHTML = "⏸ Pause";
+  } else if (state === "paused") {
+    btn.innerHTML = "▶️ Resume";
+  } else {
+    btn.innerHTML = "🔊 Play";
+  }
+}
+
+// ── BUTTON HANDLER ──
+function handleVoiceControl() {
+  if (!currentUtterance) return;
+
+  togglePauseSpeech();
+}
+
+// ── DEBUG ──
+function showAvailableVoices() {
+  console.table(allVoices.map(v => ({
+    name: v.name,
+    lang: v.lang
+  })));
+}
+
+// ── INIT ──
+window.speechSynthesis.onvoiceschanged = loadVoices;
+setTimeout(loadVoices, 500);
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)

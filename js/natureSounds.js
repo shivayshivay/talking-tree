@@ -223,7 +223,13 @@ function stopNatureSounds() {
   setTimeout(() => {
     natureNodes.forEach(n => { try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch(e){} });
     natureNodes = [];
+<<<<<<< HEAD
     if (natureCtx) { natureCtx.close(); natureCtx = null; masterGain = null; }
+=======
+    // Don't close AudioContext — keep it alive so sounds can restart
+    // Just reset gain to 0 for clean next start
+    if (masterGain) masterGain.gain.setValueAtTime(0, natureCtx.currentTime);
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   }, 1600);
 
   updateNatureUI(false);

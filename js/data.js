@@ -1,4 +1,5 @@
 // ── TREE DATA ──
+<<<<<<< HEAD
 // ── TREE PHOTOS (Wikimedia public domain) ──
 const TREE_PHOTOS = {
   "IBS-001": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/320px-Hapus_Mango.jpg",
@@ -15,6 +16,8 @@ const TREE_PHOTOS = {
   "CAC-003":  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Barringtonia_acutangula_flowers.jpg/320px-Barringtonia_acutangula_flowers.jpg",
 };
 
+=======
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
 const TREES = [
   {
     emoji: '🥭', name: 'Mango Tree', latin: 'Mangifera indica',
@@ -68,6 +71,37 @@ const TREES = [
       benefit: "Beyond carbon, I reduce noise pollution by up to five decibels, lower ambient temperature, and my flowers attract hundreds of pollinators every season.",
       default: "The Ashoka tree has been a symbol of peace for millennia. Ask me about my health, heritage, carbon, or the benefits I bring to this city!"
     }
+<<<<<<< HEAD
+=======
+  },
+  {
+    emoji: '🌳', name: 'Banyan Tree', latin: 'Ficus benghalensis',
+    age: '🎂 Est. age: 150 yrs · 25 kg CO₂/yr',
+    greeting: "Welcome, traveler. I am the mighty Banyan. My aerial roots have grown into thick trunks, creating a forest from a single seed. Sit beneath my vast shade and listen to the whispers of time.",
+    responses: {
+      health: "I am ancient and resilient. My vast root system finds moisture deep within the earth. As long as my aerial roots can breathe, I remain strong.",
+      carbon: "I am a giant! I can sequester up to twenty five kilograms of carbon dioxide a year, and my massive canopy acts as a cooling umbrella for the city.",
+      water: "I am highly drought-resistant, but I do love the monsoon. My extensive roots store water efficiently, allowing me to thrive even in dry spells.",
+      age: "I have witnessed centuries of change. Some of my kind can live for over a thousand years! Every aerial root is a chapter in my long, unfolding story.",
+      species: "I am Ficus benghalensis, the National Tree of India. I am a keystone species, supporting countless birds, insects, and mammals with my figs.",
+      benefit: "I prevent soil erosion, lower urban temperatures significantly, and provide a self-sustaining micro-ecosystem for urban wildlife.",
+      default: "The Banyan provides shelter to all. Ask me about my health, my history, my carbon absorption, or the diverse life I support!"
+    }
+  },
+  {
+    emoji: '🌿', name: 'Neem Tree', latin: 'Azadirachta indica',
+    age: '🎂 Est. age: 40 yrs · 17 kg CO₂/yr',
+    greeting: "Hello! I am the Neem tree, often called the 'Village Pharmacy'. My leaves are bitter, but my benefits are incredibly sweet. I purify the air and heal the sick. How can I help you today?",
+    responses: {
+      health: "I am a hardy tree! I thrive in hot climates and poor soils. Today, I am absorbing the bright sunlight and converting it into powerful medicinal compounds.",
+      carbon: "I absorb around seventeen kilograms of carbon annually, but my main environmental contribution is purifying the air and acting as a natural pest repellent.",
+      water: "I don't need much water to survive! I am highly drought-tolerant and my deep taproot finds moisture where other plants cannot.",
+      age: "I have been standing here for forty years. My wood is strong and termite-resistant, ensuring I will be here to share my medicine for many more decades.",
+      species: "I am Azadirachta indica. Every part of me—leaves, bark, seeds, and roots—has powerful antibacterial, antifungal, and antiviral properties.",
+      benefit: "I am nature's pesticide! I protect nearby crops from pests without harmful chemicals. I also provide excellent cooling shade and purify the surrounding air.",
+      default: "I am the healing tree. Ask me about my medicinal uses, carbon tracking, drought resistance, or general health!"
+    }
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   }
 ];
 
@@ -84,7 +118,15 @@ const MAP_MARKERS = [
   // ── Christ Academy, Begur Koppa Road ──
   { id:'CAC-001', name:'Ashoka Tree',   location:'Christ Academy, Begur Koppa Road',     lat:12.8244, lng:77.6209, health:'good', temp:27, moist:70, aqi:40, co2:'19 kg/yr', species:'Saraca asoca',          age:'50 yrs', emoji:'🌲' },
   { id:'CAC-002', name:'Coconut Palm',  location:'Christ Academy, Begur Koppa Road',     lat:12.8248, lng:77.6214, health:'good', temp:30, moist:55, aqi:44, co2:'15 kg/yr', species:'Cocos nucifera',        age:'32 yrs', emoji:'🌴' },
+<<<<<<< HEAD
   { id:'CAC-003', name:'Indian Oak',    location:'Christ Academy, Begur Koppa Road',     lat:12.8240, lng:77.6205, health:'bad',  temp:32, moist:22, aqi:58, co2:'18 kg/yr', species:'Barringtonia acutangula','age':'55 yrs', emoji:'🎋' },
+=======
+  { id:'CAC-003', name:'Indian Oak',    location:'Christ Academy, Begur Koppa Road',     lat:12.8240, lng:77.6205, health:'bad',  temp:32, moist:22, aqi:58, co2:'18 kg/yr', species:'Barringtonia acutangula', age:'55 yrs', emoji:'🎋' },
+  // ── Central Bangalore ──
+  { id:'CB-001', name:'Banyan Tree',   location:'Cubbon Park, Bangalore',               lat:12.9779, lng:77.5952, health:'good', temp:25, moist:75, aqi:40, co2:'25 kg/yr', species:'Ficus benghalensis',    age:'150 yrs', emoji:'🌳' },
+  { id:'UL-001', name:'Eucalyptus',  location:'Ulsoor Lake, Bangalore',                lat:12.9818, lng:77.6200, health:'good', temp:26, moist:65, aqi:45, co2:'40 kg/yr', species:'Eucalyptus globulus', age:'45 yrs', emoji:'🌿' },
+  { id:'IN-001', name:'Jacaranda',   location:'100 Feet Road, Indiranagar',            lat:12.9784, lng:77.6408, health:'good', temp:28, moist:55, aqi:50, co2:'10 kg/yr', species:'Jacaranda mimosifolia', age:'35 yrs', emoji:'🌸' },
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
 ];
 
 // ── LEADERBOARD DATA ──

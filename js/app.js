@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ── APP INIT & NAVIGATION ──
 
 // ── DRAWER ──
@@ -162,21 +163,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle mobile QR scan: ?tree=IBS-001
   const params    = new URLSearchParams(window.location.search);
+=======
+// ── APP INIT ──
+
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  stopSpeech();
+  if (id === 'weather')    loadWeather();
+  if (id === 'leaderboard') buildLeaderboard('schools');
+  if (id === 'map')        initMap();
+  if (id === 'qr')         { buildQRChips(); buildLangGrid(); }
+  if (id === 'worldtrees') initWorldTrees();
+}
+
+// ── BOOT ──
+document.addEventListener('DOMContentLoaded', () => {
+  // Build tree tabs
+  buildTreeTabs();
+
+  // Initial sensor read
+  randomSensors();
+  setInterval(randomSensors, 5000);
+
+  // Speak first tree greeting after voices load
+  setTimeout(() => {
+    addTreeMsg(TREES[0].greeting, true);
+  }, 400);
+
+  // Build community feed
+  buildFeed(SEED_REPORTS);
+
+  // Init carbon calc
+  updateCarbon();
+
+  // Init leaderboard (pre-build so it's ready)
+  buildLeaderboard('schools');
+
+  // ── Handle mobile QR scan: ?tree=IBS-001 ──
+  const params = new URLSearchParams(window.location.search);
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   const treeParam = params.get('tree');
   if (treeParam) {
     const treeId = treeParam.trim().toUpperCase();
     const tree   = MAP_MARKERS.find(m => m.id === treeId);
     if (tree) {
+<<<<<<< HEAD
       setTimeout(() => {
         const qrBtn = document.getElementById('di-qr');
+=======
+      // Switch to QR tab automatically
+      setTimeout(() => {
+        const qrBtn = document.querySelector('.nav-tab[onclick*="qr"]');
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
         showTab('qr', qrBtn);
         buildQRChips();
         document.getElementById('qrManualInput').value = tree.id;
         showQRResult(tree);
+<<<<<<< HEAD
+=======
+        // Show welcome banner for mobile visitor
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
         showMobileBanner(tree);
       }, 600);
     }
   }
+<<<<<<< HEAD
   console.log('Talking Trees loaded successfully');
 });
 
@@ -187,6 +241,33 @@ function showMobileBanner(tree) {
   banner.id = 'mobileBanner';
   banner.style.cssText = `position:fixed;top:0;left:0;right:0;z-index:999;background:var(--green);color:#fff;padding:12px 16px;text-align:center;font-family:var(--font-ui);font-size:13px;box-shadow:0 2px 12px rgba(0,0,0,0.2);animation:fadeIn 0.4s ease`;
   banner.innerHTML = `<strong>QR Scanned:</strong> ${tree.name} &middot; ${tree.location} <button onclick="this.parentElement.remove()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:18px;cursor:pointer">&#x2715;</button>`;
+=======
+
+  console.log('🌳 Talking Trees app loaded successfully!');
+});
+
+// ── MOBILE WELCOME BANNER ──
+function showMobileBanner(tree) {
+  const existing = document.getElementById('mobileBanner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'mobileBanner';
+  banner.style.cssText = `
+    position:fixed;top:0;left:0;right:0;z-index:999;
+    background:linear-gradient(135deg,#1b5e20,#2e7d32);
+    color:#c8e6c9;padding:12px 16px;text-align:center;
+    font-family:'DM Sans',sans-serif;font-size:13px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.4);
+    animation:slideDown 0.4s ease;
+  `;
+  banner.innerHTML = `
+    <style>@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}</style>
+    <div style="font-size:16px;margin-bottom:2px">${tree.emoji} QR Code Scanned!</div>
+    <div style="font-size:12px;opacity:0.85">Welcome to <strong>${tree.name}</strong> · ${tree.location}</div>
+    <button onclick="this.parentElement.remove()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#a5d6a7;font-size:18px;cursor:pointer;font-family:sans-serif">✕</button>
+  `;
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   document.body.prepend(banner);
   setTimeout(() => { if (banner.parentElement) banner.remove(); }, 5000);
 }

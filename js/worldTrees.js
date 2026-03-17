@@ -29,6 +29,15 @@ const WORLD_TREES = [
   { id:'wt23', emoji:'🌸', name:'Jacaranda',       latin:'Jacaranda mimosifolia',   country:'Argentina', continent:'S America',climate:'Subtropical', height:'5–15m',  lifespan:'100 yrs',  co2:'10 kg/yr', uses:'Ornamental, timber',         medicinal:'Bark used for syphilis treatment traditionally', fact:'Turns entire streets purple! Symbol of Pretoria, South Africa.', color:'#6a1b9a' },
   { id:'wt24', emoji:'🌳', name:'Maple',           latin:'Acer saccharum',          country:'Canada',    continent:'N America',climate:'Temperate',  height:'25–35m', lifespan:'400 yrs',  co2:'20 kg/yr', uses:'Syrup, timber, ornamental',  medicinal:'Bark treats eye and skin infections', fact:'National symbol of Canada. Sap makes world famous maple syrup!', color:'#bf360c' },
   { id:'wt25', emoji:'🌲', name:'Cedar of Lebanon',latin:'Cedrus libani',           country:'Lebanon',   continent:'Asia',    climate:'Mediterranean',height:'30–40m', lifespan:'2000 yrs', co2:'18 kg/yr', uses:'Timber, ornamental, sacred', medicinal:'Oil repels insects, treats skin conditions', fact:'Symbol on the Lebanese flag. Used to build Solomon\'s Temple!', color:'#4caf50' },
+<<<<<<< HEAD
+=======
+  // ── FASINCATING NEW ADDITIONS ──
+  { id:'wt26', emoji:'🩸', name:'Dragon Blood Tree', latin:'Dracaena cinnabari', country:'Yemen', continent:'Asia', climate:'Arid', height:'9–12m', lifespan:'Hundreds of yrs', co2:'5 kg/yr', uses:'Resin, dye, medicine', medicinal:'Red sap used to treat wounds and as a coagulant', fact:'Looks like an umbrella blown inside out. Bleeds red resin!', color:'#c62828' },
+  { id:'wt27', emoji:'🌈', name:'Rainbow Eucalyptus', latin:'Eucalyptus deglupta', country:'Philippines', continent:'Asia', climate:'Tropical', height:'60–75m', lifespan:'150 yrs', co2:'35 kg/yr', uses:'Paper pulp, ornamental', medicinal:'Leaves used similarly to other eucalyptus species', fact:'Its bark peels away to reveal naturally occurring neon colors!', color:'#ec407a' },
+  { id:'wt28', emoji:'🌲', name:'Bristlecone Pine', latin:'Pinus longaeva', country:'USA', continent:'N America', climate:'Subalpine', height:'5–15m', lifespan:'5000+ yrs', co2:'3 kg/yr', uses:'Conservation, dendrochronology', medicinal:'None documented, highly protected', fact:'The oldest living non-clonal organism on Earth. One is over 5000 years old!', color:'#fbc02d' },
+  { id:'wt29', emoji:'🍃', name:'Ginkgo Biloba', latin:'Ginkgo biloba', country:'China', continent:'Asia', climate:'Temperate', height:'20–35m', lifespan:'1000+ yrs', co2:'15 kg/yr', uses:'Medicine, ornamental, food', medicinal:'Improves blood circulation and memory (traditional)', fact:'A living fossil! Six Ginkgo trees survived the atomic bombing of Hiroshima.', color:'#fbc02d' },
+  { id:'wt30', emoji:'🌲', name:'Bunya Pine', latin:'Araucaria bidwillii', country:'Australia', continent:'Australia', climate:'Subtropical', height:'30–45m', lifespan:'500 yrs', co2:'20 kg/yr', uses:'Food (nuts), timber, cultural', medicinal:'Resin used traditionally by Indigenous people', fact:'Drops massive cones that can weigh up to 10kg! Watch your head!', color:'#388e3c' },
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
 ];
 
 let wtFilterContinent = 'All';
@@ -142,6 +151,7 @@ function speakWTTree(tree) {
     Fun fact: ${tree.fact}`;
   speakText(txt, { rate: 0.88, pitch: 0.85 });
 }
+<<<<<<< HEAD
 
 // ── 30 NEW TREES (added to make total 55) ──
 WORLD_TREES.push(
@@ -176,3 +186,5 @@ WORLD_TREES.push(
   { id:'wt54', emoji:'🌳', name:'Cork Oak',        latin:'Quercus suber',          country:'Portugal',   continent:'Europe',    climate:'Mediterranean',height:'10–20m', lifespan:'300 yrs',  co2:'16 kg/yr', uses:'Cork products, wine bottles',    medicinal:'Bark decoction treats fever', fact:'Cork is harvested from the bark every 9 years without harming the tree — one of the most sustainable materials!', color:'#6d4c41' },
   { id:'wt55', emoji:'🌿', name:'Dragon Blood Tree',latin:'Dracaena cinnabari',    country:'Yemen',      continent:'Asia',      climate:'Arid',         height:'6–10m',  lifespan:'600 yrs',  co2:'5 kg/yr',  uses:'Red resin, medicine, dye',       medicinal:'Resin used as antiseptic and antiviral', fact:'Its unique umbrella-shaped canopy minimizes water loss. The red resin is used as dragon\'s blood dye!', color:'#b71c1c' }
 );
+=======
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)

@@ -1,17 +1,35 @@
 // ── TREE IDENTIFIER MODULE ──
 let tiUploadedFile = null;
+<<<<<<< HEAD
 let tiResultData   = null;
 let tiActiveTab    = 'overview';
+=======
+let tiResultData = null;
+let tiActiveTab = 'overview';
+
+// ⚠️ ADD YOUR API KEY HERE
+const ANTHROPIC_API_KEY = "YOUR_API_KEY_HERE";
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
 
 function handleTreeIDUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
+<<<<<<< HEAD
   tiUploadedFile = file;
+=======
+
+  tiUploadedFile = file;
+
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   const reader = new FileReader();
   reader.onload = ev => {
     const preview = document.getElementById('tiPreview');
     preview.src = ev.target.result;
     preview.style.display = 'block';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
     document.getElementById('tiAnalyzeBtn').style.display = 'block';
     document.getElementById('tiResult').style.display = 'none';
   };
@@ -19,17 +37,30 @@ function handleTreeIDUpload(e) {
 }
 
 async function identifyTree() {
+<<<<<<< HEAD
   const result = document.getElementById('tiResult');
   result.style.display = 'block';
   document.getElementById('tiName').textContent  = 'Identifying tree...';
   document.getElementById('tiLatin').textContent = '';
   document.getElementById('tiOrigin').textContent = '';
+=======
+  if (!tiUploadedFile) return;
+
+  const result = document.getElementById('tiResult');
+  result.style.display = 'block';
+
+  document.getElementById('tiName').textContent = 'Identifying tree...';
+  document.getElementById('tiLatin').textContent = '';
+  document.getElementById('tiOrigin').textContent = '';
+
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
   document.getElementById('tiTabContent').innerHTML = `
     <div class="ai-thinking" style="justify-content:center;padding:20px">
       <div class="aidot"></div><div class="aidot"></div><div class="aidot"></div>
     </div>`;
 
   const reader = new FileReader();
+<<<<<<< HEAD
   reader.onload = async ev => {
     const b64 = ev.target.result.split(',')[1];
     const mt  = tiUploadedFile.type || 'image/jpeg';
@@ -83,10 +114,81 @@ Respond ONLY with a valid JSON object (no markdown, no backticks):
   "found_in_india": "string — which states/regions in India this tree is found",
   "conservation_status": "string"
 }` }
+=======
+
+  reader.onload = async ev => {
+    const base64Full = ev.target.result;
+    const b64 = base64Full.split(',')[1];
+    const mt = tiUploadedFile.type || 'image/jpeg';
+
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-sonnet-20240229',
+          max_tokens: 1500,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: mt,
+                  data: b64
+                }
+              },
+              {
+                type: 'text',
+                text: `Identify this tree and return ONLY JSON:
+{
+  "common_name": "",
+  "scientific_name": "",
+  "family": "",
+  "emoji": "🌳",
+  "confidence": 90,
+  "origin": "",
+  "overview": "",
+  "height": "",
+  "lifespan": "",
+  "growth_rate": "",
+  "carbon_absorption": "",
+  "found_in_india": "",
+  "conservation_status": "",
+  "care_tips": ["", "", ""],
+  "fun_facts": ["", "", ""],
+  "climate": {
+    "zones": "",
+    "temperature_range": "",
+    "rainfall": "",
+    "drought_tolerance": "",
+    "environmental_benefits": ["", "", ""]
+  },
+  "medicinal": {
+    "uses": ["", "", ""],
+    "parts_used": "",
+    "traditional_medicine": ""
+  },
+  "uses": {
+    "timber": "",
+    "food": "",
+    "cultural": "",
+    "industrial": "",
+    "ornamental": ""
+  }
+}`
+              }
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
             ]
           }]
         })
       });
+<<<<<<< HEAD
       const data   = await resp.json();
       const text   = data.content.map(i => i.text || '').join('');
       const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
@@ -185,3 +287,87 @@ function speakTreeID() {
   btn.innerHTML = '⏹ Stop';
   speakText(txt, { rate: 0.88, pitch: 0.85, onend: () => { btn.innerHTML = '🔊 Hear Full Details'; } });
 }
+=======
+
+      const data = await resp.json();
+
+      // 🧠 SAFE PARSE
+      let text = (data.content || []).map(i => i.text || '').join('').trim();
+
+      text = text.replace(/```json|```/g, '').trim();
+
+      let parsed;
+
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        console.warn("AI JSON parse failed, using fallback");
+        parsed = getFallbackTree();
+      }
+
+      tiResultData = parsed;
+      renderTIResult(parsed);
+
+    } catch (err) {
+      console.error(err);
+
+      const fallback = getFallbackTree();
+      tiResultData = fallback;
+      renderTIResult(fallback);
+    }
+  };
+
+  reader.readAsDataURL(tiUploadedFile);
+}
+
+// ✅ FALLBACK (NEVER FAIL)
+function getFallbackTree() {
+  return {
+    common_name: "Unknown Tree",
+    scientific_name: "Unknown",
+    family: "Unknown",
+    emoji: "🌳",
+    confidence: 50,
+    origin: "Unknown",
+    overview: "Could not fully identify the tree. Try a clearer image.",
+    height: "Unknown",
+    lifespan: "Unknown",
+    growth_rate: "Unknown",
+    carbon_absorption: "Unknown",
+    found_in_india: "Unknown",
+    conservation_status: "Unknown",
+    care_tips: ["Provide water", "Ensure sunlight", "Monitor health"],
+    fun_facts: ["Trees improve air quality"],
+    climate: {
+      zones: "Various",
+      temperature_range: "Moderate",
+      rainfall: "Moderate",
+      drought_tolerance: "Medium",
+      environmental_benefits: ["Produces oxygen"]
+    },
+    medicinal: {
+      uses: ["Traditional uses"],
+      parts_used: "Leaves",
+      traditional_medicine: "Used in basic herbal medicine"
+    },
+    uses: {
+      timber: "Unknown",
+      food: "Unknown",
+      cultural: "Unknown",
+      industrial: "Unknown",
+      ornamental: "Yes"
+    }
+  };
+}
+
+function renderTIResult(d) {
+  document.getElementById('tiEmoji').textContent = d.emoji || '🌳';
+  document.getElementById('tiName').textContent = d.common_name || 'Unknown';
+  document.getElementById('tiLatin').textContent = (d.scientific_name || '') + ' · ' + (d.family || '');
+  document.getElementById('tiOrigin').textContent = '📍 ' + (d.origin || 'Unknown');
+  document.getElementById('tiConf').textContent = (d.confidence || 0) + '%';
+
+  switchTITab('overview', document.querySelector('.ti-tab'));
+  addEcoPoints(25);
+}
+>>>>>>> 0266752 (Talking Trees - Smart City AI & IoT Project)
