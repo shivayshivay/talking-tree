@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Talking Trees — Smart City AI & IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#4caf50;--green-dark:#1b5e20;--green-mid:#2e7d32;
+  --green-light:#a5d6a7;--green-glow:rgba(76,175,80,0.15);
+  --bg:#060e07;--bg2:#0a160b;--bg3:#0f1f10;
+  --text:#e8f5e9;--text2:rgba(232,245,233,0.6);--text3:rgba(232,245,233,0.35);
+  --border:rgba(76,175,80,0.15);--border2:rgba(76,175,80,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none}
+
+/* CUSTOM CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--green);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s;mix-blend-mode:screen}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(76,175,80,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;mix-blend-mode:screen}
+
+/* GRAIN OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(6,14,7,0.95),transparent);backdrop-filter:blur(10px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--green-light);font-weight:600;letter-spacing:1px}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{color:var(--text2);font-size:13px;text-decoration:none;letter-spacing:0.5px;transition:color 0.2s}
+.nav-links a:hover{color:var(--green-light)}
+.nav-cta{background:var(--green-mid);color:var(--green-light);border:none;padding:8px 20px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:none;transition:all 0.2s}
+.nav-cta:hover{background:var(--green);color:#fff}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 40px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(27,94,32,0.3) 0%,transparent 70%);pointer-events:none}
+.hero-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ring{position:absolute;border-radius:50%;border:0.5px solid;animation:ringPulse 4s ease-in-out infinite}
+.ring:nth-child(1){width:300px;height:300px;border-color:rgba(76,175,80,0.15);animation-delay:0s}
+.ring:nth-child(2){width:500px;height:500px;border-color:rgba(76,175,80,0.1);animation-delay:0.8s}
+.ring:nth-child(3){width:700px;height:700px;border-color:rgba(76,175,80,0.06);animation-delay:1.6s}
+.ring:nth-child(4){width:900px;height:900px;border-color:rgba(76,175,80,0.03);animation-delay:2.4s}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.04);opacity:0.4}}
+.hero-tag{font-size:11px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 0.8s 0.2s forwards}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,110px);font-weight:300;line-height:0.95;color:var(--text);margin-bottom:8px;opacity:0;animation:fadeUp 0.8s 0.4s forwards}
+.hero-title em{color:var(--green);font-style:normal;font-weight:600}
+.hero-title .line2{display:block;font-weight:600;color:var(--green-light)}
+.hero-sub{font-size:clamp(14px,2vw,17px);color:var(--text2);max-width:600px;line-height:1.7;margin:20px auto 40px;opacity:0;animation:fadeUp 0.8s 0.6s forwards}
+.hero-btns{display:flex;gap:12px;justify-content:center;opacity:0;animation:fadeUp 0.8s 0.8s forwards;flex-wrap:wrap}
+.btn-primary{background:var(--green-mid);color:var(--green-light);border:none;padding:14px 32px;border-radius:30px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:none;transition:all 0.3s;letter-spacing:0.5px}
+.btn-primary:hover{background:var(--green);color:#fff;transform:translateY(-2px);box-shadow:0 8px 30px rgba(76,175,80,0.3)}
+.btn-outline{background:transparent;color:var(--green-light);border:0.5px solid var(--border2);padding:14px 32px;border-radius:30px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:none;transition:all 0.3s}
+.btn-outline:hover{background:var(--green-glow);border-color:var(--green);transform:translateY(-2px)}
+.hero-tree{font-size:80px;margin-bottom:16px;display:block;opacity:0;animation:treeFloat 0.8s 0.1s forwards;filter:drop-shadow(0 0 30px rgba(76,175,80,0.4))}
+@keyframes treeFloat{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+
+/* STATS BAR */
+.stats-bar{background:var(--bg2);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:28px 40px;display:grid;grid-template-columns:repeat(5,1fr);gap:20px;position:relative;z-index:2}
+.stat-item{text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--green-light)}
+.stat-lbl{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* SECTIONS */
+section{padding:80px 40px;max-width:1100px;margin:0 auto}
+.sec-eyebrow{font-size:11px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;color:var(--text);line-height:1.1;margin-bottom:16px}
+.sec-title strong{color:var(--green-light);font-weight:600}
+.sec-sub{font-size:15px;color:var(--text2);max-width:560px;line-height:1.7;margin-bottom:48px}
+
+/* FEATURES GRID */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.feat-card{background:var(--bg3);border:0.5px solid var(--border);border-radius:14px;padding:22px;transition:all 0.3s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,var(--green-glow),transparent 70%);opacity:0;transition:opacity 0.3s}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.feat-card:hover::before{opacity:1}
+.feat-emoji{font-size:28px;margin-bottom:12px;display:block}
+.feat-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:5px}
+.feat-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.feat-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(76,175,80,0.1);color:var(--green);border:0.5px solid rgba(76,175,80,0.2);margin-top:8px}
+
+/* TECH STACK */
+.tech-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tech-box{background:var(--bg3);border:0.5px solid var(--border);border-radius:14px;padding:24px}
+.tech-box-title{font-size:12px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.tech-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,255,255,0.04)}
+.tech-item:last-child{border-bottom:none}
+.tech-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+.tech-name{font-size:12px;color:var(--text);font-family:'DM Mono',monospace}
+.tech-role{font-size:11px;color:var(--text3);margin-left:auto}
+
+/* FLOW */
+.flow-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;margin:40px 0}
+.flow-node{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px 20px;text-align:center;min-width:110px}
+.flow-node-icon{font-size:20px;margin-bottom:4px}
+.flow-node-name{font-size:11px;color:var(--text2)}
+.flow-arrow{color:var(--green);font-size:18px;padding:0 8px;opacity:0.5}
+
+/* LOCATIONS */
+.locations-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.loc-card{background:var(--bg3);border:0.5px solid var(--border);border-radius:14px;padding:20px;transition:all 0.3s}
+.loc-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.loc-icon{font-size:32px;margin-bottom:10px}
+.loc-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.loc-coord{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:10px}
+.loc-trees{display:flex;gap:4px;flex-wrap:wrap}
+.loc-tree-chip{font-size:10px;padding:2px 8px;background:rgba(76,175,80,0.08);border:0.5px solid var(--border);border-radius:20px;color:var(--text2)}
+
+/* VOICE LANGS */
+.langs-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:24px}
+.lang-pill{padding:6px 14px;border-radius:20px;border:0.5px solid var(--border);background:var(--bg3);font-size:12px;color:var(--text2);transition:all 0.2s}
+.lang-pill:hover{background:var(--green-glow);border-color:var(--green);color:var(--green-light)}
+.lang-pill.featured{background:rgba(76,175,80,0.12);border-color:var(--border2);color:var(--green-light)}
+
+/* SOUND BARS */
+.sound-bars{display:flex;align-items:flex-end;gap:3px;height:40px;margin:20px 0}
+.bar{width:4px;border-radius:2px;background:var(--green);animation:barDance 1.2s ease-in-out infinite}
+.bar:nth-child(1){height:20px;animation-delay:0s}
+.bar:nth-child(2){height:35px;animation-delay:0.1s}
+.bar:nth-child(3){height:28px;animation-delay:0.2s}
+.bar:nth-child(4){height:40px;animation-delay:0.3s}
+.bar:nth-child(5){height:22px;animation-delay:0.4s}
+.bar:nth-child(6){height:35px;animation-delay:0.15s}
+.bar:nth-child(7){height:18px;animation-delay:0.25s}
+.bar:nth-child(8){height:30px;animation-delay:0.35s}
+@keyframes barDance{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1)}}
+
+/* NATURE SOUNDS LIST */
+.nature-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:20px}
+.nature-item{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px}
+.nature-item-icon{font-size:22px}
+.nature-item-text{font-size:12px;color:var(--text2)}
+
+/* FUTURE */
+.future-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.future-card{background:var(--bg3);border:0.5px dashed var(--border);border-radius:12px;padding:16px;opacity:0.7;transition:all 0.2s}
+.future-card:hover{opacity:1;border-style:solid;border-color:var(--border2)}
+.future-icon{font-size:24px;margin-bottom:8px}
+.future-name{font-size:13px;color:var(--text2)}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:0.5px solid var(--border);padding:40px;text-align:center}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green-light);margin-bottom:8px}
+.footer-logo span{color:var(--green)}
+.footer-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.footer-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.fbadge{font-size:11px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border);color:var(--text3)}
+
+/* DIVIDER */
+.divider{border:none;border-top:0.5px solid var(--border);margin:0 40px}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:640px){
+  nav{padding:16px 20px}
+  .nav-links{display:none}
+  .stats-bar{grid-template-columns:repeat(3,1fr);padding:20px}
+  section{padding:60px 20px}
+  .tech-split,.locations-grid{grid-template-columns:1fr}
+  .flow-row{gap:4px}
+  .flow-arrow{font-size:14px;padding:0 4px}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Talking <span>Trees</span> 🌳</div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#tech">Tech Stack</a>
+    <a href="#locations">Locations</a>
+    <a href="#voice">Voice AI</a>
+    <a href="#future">Roadmap</a>
+  </div>
+  <button class="nav-cta" onclick="window.location.href='index.html'">Launch App →</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-rings">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+  </div>
+  <span class="hero-tree">🌳</span>
+  <div class="hero-tag">Smart City · AI · IoT · Bengaluru</div>
+  <h1 class="hero-title">
+    Talking<em> Trees</em>
+    <span class="line2">Come Alive.</span>
+  </h1>
+  <p class="hero-sub">An interactive eco-platform where trees are alive, talking entities. Users tap, scan, or explore trees — trees speak, show data, and educate people in real time.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="window.location.href='index.html'">🚀 Launch Demo</button>
+    <button class="btn-outline" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Explore Features ↓</button>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">10</div><div class="stat-lbl">App Tabs</div></div>
+  <div class="stat-item"><div class="stat-num">9</div><div class="stat-lbl">Trees on Map</div></div>
+  <div class="stat-item"><div class="stat-num">16</div><div class="stat-lbl">Languages</div></div>
+  <div class="stat-item"><div class="stat-num">25+</div><div class="stat-lbl">World Trees</div></div>
+  <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Real Locations</div></div>
+</div>
+
+<hr class="divider"/>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <div class="sec-eyebrow">What we built</div>
+    <h2 class="sec-title">10 Powerful <strong>Features</strong></h2>
+    <p class="sec-sub">Every feature is live, interactive, and works on both desktop and mobile.</p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feat-card"><span class="feat-emoji">🌳</span><div class="feat-name">Tree Talk</div><div class="feat-desc">Trees chat like humans with unique personalities. Typewriter UI + auto-speak voice on every reply.</div><span class="feat-tag">AI Voice</span></div>
+    <div class="feat-card"><span class="feat-emoji">🗺️</span><div class="feat-name">City Map</div><div class="feat-desc">Real GPS Leaflet map. 9 trees across 3 Bengaluru locations. Click any tree — it speaks to you.</div><span class="feat-tag">Real GPS</span></div>
+    <div class="feat-card"><span class="feat-emoji">📱</span><div class="feat-name">QR Scanner</div><div class="feat-desc">Camera / paste / upload / manual ID lookup. Scan QR → phone opens app → tree speaks instantly.</div><span class="feat-tag">Mobile Ready</span></div>
+    <div class="feat-card"><span class="feat-emoji">🌦️</span><div class="feat-name">Weather Mood</div><div class="feat-desc">Trees react emotionally to live weather. Hot day = tired voice. Rain = joyful. Storm = dramatic.</div><span class="feat-tag">Live Data</span></div>
+    <div class="feat-card"><span class="feat-emoji">🧮</span><div class="feat-name">Carbon Calculator</div><div class="feat-desc">Personal CO₂ footprint calculator. Shows exactly how many trees needed to offset your lifestyle.</div><span class="feat-tag">Education</span></div>
+    <div class="feat-card"><span class="feat-emoji">📢</span><div class="feat-name">Community</div><div class="feat-desc">Report tree issues. Earn eco points. Real reports saved to MongoDB with severity and status.</div><span class="feat-tag">MongoDB</span></div>
+    <div class="feat-card"><span class="feat-emoji">🍃</span><div class="feat-name">Leaf AI</div><div class="feat-desc">Upload a leaf photo — Claude AI diagnoses disease, pest damage, or health with confidence score.</div><span class="feat-tag">Claude AI</span></div>
+    <div class="feat-card"><span class="feat-emoji">📸</span><div class="feat-name">Tree Identifier</div><div class="feat-desc">Photo of any tree → AI returns species, medicinal uses, climate zone, fun facts & care tips.</div><span class="feat-tag">Claude AI</span></div>
+    <div class="feat-card"><span class="feat-emoji">🌍</span><div class="feat-name">World Trees</div><div class="feat-desc">25 trees from 6 continents. Search, filter by continent, click for full details + voice narration.</div><span class="feat-tag">Encyclopedia</span></div>
+    <div class="feat-card"><span class="feat-emoji">🏆</span><div class="feat-name">Leaderboard</div><div class="feat-desc">Schools, users and zones compete for eco points. Rankings pulled live from MongoDB.</div><span class="feat-tag">Gamification</span></div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- SYSTEM FLOW -->
+<section>
+  <div class="reveal">
+    <div class="sec-eyebrow">System Architecture</div>
+    <h2 class="sec-title">How it all <strong>flows</strong></h2>
+  </div>
+  <div class="flow-row reveal">
+    <div class="flow-node"><div class="flow-node-icon">👤</div><div class="flow-node-name">User</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-icon">🌐</div><div class="flow-node-name">Frontend</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-icon">🔗</div><div class="flow-node-name">ngrok tunnel</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-icon">🐍</div><div class="flow-node-name">Flask API</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-icon">🍃</div><div class="flow-node-name">MongoDB</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="flow-node-icon">🎤</div><div class="flow-node-name">Voice + UI</div></div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="reveal">
+    <div class="sec-eyebrow">Technology</div>
+    <h2 class="sec-title">Built with the <strong>right tools</strong></h2>
+    <p class="sec-sub">Zero npm dependencies. Runs in any browser. No build tools needed.</p>
+  </div>
+  <div class="tech-split reveal">
+    <div class="tech-box">
+      <div class="tech-box-title">🟢 Frontend</div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">HTML5 + CSS3 + JS</div><div class="tech-role">Core UI</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Leaflet.js</div><div class="tech-role">Real GPS Maps</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Web Speech API</div><div class="tech-role">16 Lang TTS</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Web Audio API</div><div class="tech-role">Nature Sounds</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">jsQR library</div><div class="tech-role">QR Reading</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">MediaDevices API</div><div class="tech-role">Camera Scanner</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Anthropic Claude API</div><div class="tech-role">Leaf + Tree AI</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">api.qrserver.com</div><div class="tech-role">QR Generation</div></div>
+    </div>
+    <div class="tech-box">
+      <div class="tech-box-title">🔵 Backend</div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Python 3.10+</div><div class="tech-role">Language</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">Flask</div><div class="tech-role">REST API Server</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">flask-cors</div><div class="tech-role">Cross-origin</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">pymongo</div><div class="tech-role">MongoDB Driver</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">MongoDB</div><div class="tech-role">Database</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">python-dotenv</div><div class="tech-role">Config</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">ngrok</div><div class="tech-role">Public Tunnel</div></div>
+      <div class="tech-item"><div class="tech-dot"></div><div class="tech-name">IoT Simulation</div><div class="tech-role">Sensor Data</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- LOCATIONS -->
+<section id="locations">
+  <div class="reveal">
+    <div class="sec-eyebrow">Real GPS Locations</div>
+    <h2 class="sec-title">3 Locations in <strong>Bengaluru</strong></h2>
+    <p class="sec-sub">Every tree marker on the map is pinned to its real-world GPS coordinates.</p>
+  </div>
+  <div class="locations-grid reveal">
+    <div class="loc-card">
+      <div class="loc-icon">🏫</div>
+      <div class="loc-name">Izee Business School</div>
+      <div class="loc-coord">12.7799°N, 77.6481°E · Jigani</div>
+      <div class="loc-trees">
+        <span class="loc-tree-chip">🥭 Mango Tree</span>
+        <span class="loc-tree-chip">🌿 Neem</span>
+        <span class="loc-tree-chip">🌳 Peepal</span>
+      </div>
+    </div>
+    <div class="loc-card">
+      <div class="loc-icon">🏭</div>
+      <div class="loc-name">Jigani Industrial Area</div>
+      <div class="loc-coord">12.7990°N, 77.6650°E</div>
+      <div class="loc-trees">
+        <span class="loc-tree-chip">🌲 Rain Tree</span>
+        <span class="loc-tree-chip">🌸 Gulmohar</span>
+        <span class="loc-tree-chip">🌳 Banyan</span>
+      </div>
+    </div>
+    <div class="loc-card">
+      <div class="loc-icon">🏫</div>
+      <div class="loc-name">Christ Academy</div>
+      <div class="loc-coord">12.8244°N, 77.6209°E · Begur Koppa Rd</div>
+      <div class="loc-trees">
+        <span class="loc-tree-chip">🌲 Ashoka</span>
+        <span class="loc-tree-chip">🌴 Coconut Palm</span>
+        <span class="loc-tree-chip">🎋 Indian Oak</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- VOICE + NATURE -->
+<section id="voice">
+  <div class="reveal">
+    <div class="sec-eyebrow">Voice System</div>
+    <h2 class="sec-title">Trees speak in <strong>16 Languages</strong></h2>
+    <p class="sec-sub">Every tree response auto-speaks. Nature sounds play alongside the voice — wind, birds, river and leaves.</p>
+  </div>
+  <div class="sound-bars reveal">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  </div>
+  <div class="langs-wrap reveal">
+    <span class="lang-pill featured">🇬🇧 English</span>
+    <span class="lang-pill featured">🇮🇳 Hindi — हिंदी</span>
+    <span class="lang-pill featured">🇮🇳 Kannada — ಕನ್ನಡ</span>
+    <span class="lang-pill featured">🇮🇳 Tamil — தமிழ்</span>
+    <span class="lang-pill featured">🇮🇳 Telugu — తెలుగు</span>
+    <span class="lang-pill">🇮🇳 Marathi — मराठी</span>
+    <span class="lang-pill">🇮🇳 Bengali — বাংলা</span>
+    <span class="lang-pill">🇮🇳 Gujarati — ગુજરાતી</span>
+    <span class="lang-pill">🇮🇳 Malayalam — മലയാളം</span>
+    <span class="lang-pill">🇮🇳 Punjabi — ਪੰਜਾਬੀ</span>
+    <span class="lang-pill">🇫🇷 French</span>
+    <span class="lang-pill">🇪🇸 Spanish</span>
+    <span class="lang-pill">🇩🇪 German</span>
+    <span class="lang-pill">🇨🇳 Chinese</span>
+    <span class="lang-pill">🇸🇦 Arabic</span>
+    <span class="lang-pill">🇯🇵 Japanese</span>
+  </div>
+  <div class="nature-list reveal">
+    <div class="nature-item"><div class="nature-item-icon">💨</div><div class="nature-item-text">Wind — soft whooshing with LFO variation</div></div>
+    <div class="nature-item"><div class="nature-item-icon">🐦</div><div class="nature-item-text">Birds — 4 types of chirps synthesized</div></div>
+    <div class="nature-item"><div class="nature-item-icon">🌊</div><div class="nature-item-text">River — flowing brown noise</div></div>
+    <div class="nature-item"><div class="nature-item-icon">🍃</div><div class="nature-item-text">Leaves — random rustle bursts</div></div>
+    <div class="nature-item"><div class="nature-item-icon">💧</div><div class="nature-item-text">Water drops — distant drips</div></div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- FUTURE ROADMAP -->
+<section id="future">
+  <div class="reveal">
+    <div class="sec-eyebrow">Roadmap</div>
+    <h2 class="sec-title">Next Level <strong>Vision</strong></h2>
+    <p class="sec-sub">This is a startup-level idea. Here's where it goes next.</p>
+  </div>
+  <div class="future-grid reveal">
+    <div class="future-card"><div class="future-icon">🌳</div><div class="future-name">200+ Trees Dataset</div></div>
+    <div class="future-card"><div class="future-icon">📡</div><div class="future-name">Real IoT Sensors</div></div>
+    <div class="future-card"><div class="future-icon">🧠</div><div class="future-name">ML Tree Detection</div></div>
+    <div class="future-card"><div class="future-icon">☁️</div><div class="future-name">Deploy on AWS/Render</div></div>
+    <div class="future-card"><div class="future-icon">📱</div><div class="future-name">React Native App</div></div>
+    <div class="future-card"><div class="future-icon">🏙️</div><div class="future-name">Smart City Dashboard</div></div>
+    <div class="future-card"><div class="future-icon">🦯</div><div class="future-name">AR Mode — Root Visualizer</div></div>
+    <div class="future-card"><div class="future-icon">🌐</div><div class="future-name">Multi-City Support</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Talking <span>Trees</span> 🌳</div>
+  <div class="footer-sub">Built at Izee Business School · Smart City Initiative · Bengaluru, Karnataka</div>
+  <div class="footer-badges">
+    <span class="fbadge">Python + Flask</span>
+    <span class="fbadge">MongoDB</span>
+    <span class="fbadge">Claude AI</span>
+    <span class="fbadge">Leaflet.js</span>
+    <span class="fbadge">Web Audio API</span>
+    <span class="fbadge">16 Languages</span>
+    <span class="fbadge">Zero npm dependencies</span>
+  </div>
+</footer>
+
+<script>
+// Custom cursor
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)}
+animRing();
+document.querySelectorAll('button,a,.feat-card,.loc-card,.future-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(2.5)';ring.style.transform='translate(-50%,-50%) scale(1.4)';ring.style.borderColor='rgba(76,175,80,0.6)'});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';ring.style.transform='translate(-50%,-50%) scale(1)';ring.style.borderColor='rgba(76,175,80,0.4)'});
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="theme-color" content="#ffffff"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <title>Talking Trees — Smart City AI &amp; IoT</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+<div class="app">
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- SIDE DRAWER -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-logo">Talking <span>Trees</span></div>
+      <button class="drawer-close" onclick="closeDrawer()">&#x2715;</button>
+    </div>
+    <nav class="drawer-nav">
+      <div class="drawer-section-label">Main</div>
+      <button class="drawer-item active" id="di-talk" onclick="showTab('talk',this)"><div class="drawer-item-icon">&#x1F333;</div><span class="drawer-item-text">Tree Talk</span><span class="drawer-item-badge">AI</span></button>
+      <button class="drawer-item" id="di-map" onclick="showTab('map',this)"><div class="drawer-item-icon">&#x1F5FA;</div><span class="drawer-item-text">City Map</span></button>
+      <button class="drawer-item" id="di-qr" onclick="showTab('qr',this)"><div class="drawer-item-icon">&#x1F4F1;</div><span class="drawer-item-text">QR Scanner</span></button>
+      <button class="drawer-item" id="di-weather" onclick="showTab('weather',this)"><div class="drawer-item-icon">&#x1F326;</div><span class="drawer-item-text">Weather Mood</span></button>
+      <div class="drawer-section-label">Tools</div>
+      <button class="drawer-item" id="di-carbon" onclick="showTab('carbon',this)"><div class="drawer-item-icon">&#x1F9EE;</div><span class="drawer-item-text">Carbon Calculator</span></button>
+      <button class="drawer-item" id="di-community" onclick="showTab('community',this)"><div class="drawer-item-icon">&#x1F4E2;</div><span class="drawer-item-text">Community Reports</span></button>
+      <div class="drawer-section-label">Features</div>
+      <button class="drawer-item" id="di-leaf" onclick="showTab('leaf',this)"><div class="drawer-item-icon">&#x1F343;</div><span class="drawer-item-text">Leaf Diagnosis</span><span class="drawer-item-badge">AI</span></button>
+      <button class="drawer-item" id="di-worldtrees" onclick="showTab('worldtrees',this)"><div class="drawer-item-icon">&#x1F30D;</div><span class="drawer-item-text">World Trees</span></button>
+      <div class="drawer-section-label">Community</div>
+      <button class="drawer-item" id="di-leaderboard" onclick="showTab('leaderboard',this)"><div class="drawer-item-icon">&#x1F3C6;</div><span class="drawer-item-text">Leaderboard</span></button>
+    </nav>
+    <div class="drawer-footer">Izee Business School &middot; Bengaluru &middot; Smart City</div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleDrawer()">
+        <div class="hb-line"></div><div class="hb-line"></div><div class="hb-line"></div>
+      </button>
+      <div class="logo">Talking <span>Trees</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="nature-toggle-btn" onclick="toggleNatureSounds()"><span class="nt-icon">&#x1F343;</span><span>Nature</span></button>
+      <input type="range" id="natureVolSlider" min="0.1" max="1" step="0.05" value="0.6" oninput="setNatureVolume(this.value)" style="display:none;width:55px;accent-color:#2d6a2d"/>
+      <span class="live-pill"><span class="live-dot"></span> Live IoT</span>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">&#9788;</button>
+    </div>
+  </div>
+
+  <!-- TAB HEADER -->
+  <div class="tab-header" id="tabHeader">
+    <div class="tab-header-icon" id="tabHeaderIcon">&#x1F333;</div>
+    <div class="tab-header-title" id="tabHeaderTitle">Tree Talk</div>
+    <div class="tab-header-sub" id="tabHeaderSub">Chat with trees in real time</div>
+  </div>
+
+  <!-- ── TREE TALK ── -->
+  <div id="tab-talk" class="panel active">
+    <div class="tree-tabs-inner" id="treeTabs"></div>
+    <div class="two-col">
+      <div class="talk-left">
+        <div class="tree-display">
+          <img id="treePhoto" class="tree-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/200px-Hapus_Mango.jpg" alt="Mango Tree" onerror="this.style.display='none';document.getElementById('treeEmoji').style.display='block'"/>
+          <span class="tree-art" id="treeEmoji" style="display:none">&#x1FAD5;</span>
+          <div class="tree-name" id="treeName">Mango Tree</div>
+          <div class="tree-latin" id="treeLatin">Mangifera indica</div>
+          <div class="tree-age" id="treeAge">Est. age: 85 yrs &middot; 22 kg CO&#x2082;/yr</div>
+        </div>
+        <div id="voiceBar" class="voice-bar">
+          <div class="vb-waves"><div class="vb-wave"></div><div class="vb-wave"></div><div class="vb-wave"></div><div class="vb-wave"></div><div class="vb-wave"></div></div>
+          <div class="vb-text" id="vbText">Tree is speaking...</div>
+          <button class="vb-stop" onclick="stopSpeech()">Stop</button>
+        </div>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="input-row">
+          <input class="cinput" id="chatInput" placeholder="Ask the tree something..." onkeypress="if(event.key==='Enter')sendMsg()"/>
+          <button class="sbtn" onclick="sendMsg()">Ask</button>
+        </div>
+      </div>
+      <div class="talk-right">
+        <div class="sensor-card">
+          <div class="srow"><div class="slabel">Temperature</div><div><span class="sval" id="s-temp">28</span> <span class="sunit">&deg;C</span></div></div>
+          <div class="btrack"><div class="bfill" id="b-temp" style="width:56%;background:#ef9a9a"></div></div>
+          <div class="srow"><div class="slabel">Soil Moisture</div><div><span class="sval" id="s-moist">62</span> <span class="sunit">%</span></div></div>
+          <div class="btrack"><div class="bfill" id="b-moist" style="width:62%;background:#81d4fa"></div></div>
+          <div class="srow"><div class="slabel">Air Quality</div><div><span class="sval" id="s-aqi">AQI 45</span></div></div>
+          <div class="btrack"><div class="bfill" id="b-aqi" style="width:45%;background:#a5d6a7"></div></div>
+          <div class="srow"><div class="slabel">Sunlight</div><div><span class="sval" id="s-sun">7.2</span> <span class="sunit">klux</span></div></div>
+          <div class="btrack"><div class="bfill" id="b-sun" style="width:72%;background:#fff176"></div></div>
+        </div>
+        <div class="health-badge">
+          <span class="hdot good" id="hDot"></span>
+          <div><div class="htext" id="hText">Healthy</div><div class="hsub" id="hSub">All vitals normal</div></div>
+        </div>
+        <div class="eco-box">
+          <div class="eco-num" id="ecoNum">240</div>
+          <div class="eco-label">Eco Points Earned</div>
+        </div>
+        <div class="alert-box" id="alertBox">Soil moisture critically low. Immediate watering recommended.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAP ── (FIX: z-index, padding-top, full location cards) -->
+  <div id="tab-map" class="panel" style="padding-top:0">
+    <div id="real-map" style="height:340px;border-radius:0;position:relative;z-index:1"></div>
+    <div style="padding:14px">
+      <div class="map-legend">
+        <div class="legend-item"><div class="ldot" style="background:#2e7d32"></div> Healthy</div>
+        <div class="legend-item"><div class="ldot" style="background:#e65100"></div> Moderate</div>
+        <div class="legend-item"><div class="ldot" style="background:#c62828"></div> Stressed</div>
+      </div>
+      <div class="map-stats" style="margin-top:10px">
+        <div class="mstat"><div class="mstat-n">9</div><div class="mstat-l">Registered Trees</div></div>
+        <div class="mstat"><div class="mstat-n">3</div><div class="mstat-l">Locations</div></div>
+        <div class="mstat"><div class="mstat-n">189 kg</div><div class="mstat-l">CO&#x2082;/yr</div></div>
+      </div>
+      <div class="section-label" style="margin-top:14px">Location &amp; Crop Details</div>
+      <div class="location-cards" id="locationCards"></div>
+    </div>
+  </div>
+
+  <!-- ── QR SCANNER ── (FIX: auto-show result, proper QR code) -->
+  <div id="tab-qr" class="panel">
+    <div class="qr-hero">
+      <div class="qr-hero-title">Scan a Tree QR Code</div>
+      <div class="qr-hero-sub">Camera scan, paste image, or enter Tree ID below</div>
+    </div>
+    <div id="qr-scanner-box">
+      <div id="qr-video-wrap">
+        <video id="qr-video" autoplay playsinline muted></video>
+        <div class="qr-overlay"><div class="qr-frame"></div></div>
+        <div class="qr-scan-line"></div>
+      </div>
+      <button class="qr-start-btn" id="qrStartBtn" onclick="startQRScan()">Start Camera Scanner</button>
+      <button class="qr-stop-btn" id="qrStopBtn" onclick="stopQRScan()" style="display:none">Stop Scanner</button>
+    </div>
+
+    <!-- Paste / Upload QR -->
+    <div class="qr-paste-box" id="qrPasteBox"
+         ondragover="event.preventDefault();this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleQRDrop(event)">
+      <input type="file" id="qrFileInput" accept="image/*" style="display:none" onchange="handleQRFile(event)"/>
+      <div class="qr-paste-icon">&#x1F5BC;</div>
+      <div class="qr-paste-title">Paste or Drop a QR Image</div>
+      <div class="qr-paste-sub">Ctrl+V to paste &nbsp;|&nbsp; drag &amp; drop &nbsp;|&nbsp; or click upload</div>
+      <button class="qr-upload-btn" onclick="document.getElementById('qrFileInput').click()">Upload QR Image</button>
+      <canvas id="qrPasteCanvas" style="display:none"></canvas>
+      <div id="qrPasteStatus" class="qr-paste-status"></div>
+    </div>
+
+    <!-- Manual ID -->
+    <div class="qr-manual">
+      <div class="qr-manual-title">Enter Tree ID manually</div>
+      <div class="qr-manual-row">
+        <input class="qr-input" id="qrManualInput" placeholder="IBS-001, JIG-001, CAC-001..." onkeypress="if(event.key==='Enter')lookupTree()"/>
+        <button class="qr-lookup-btn" onclick="lookupTree()">Lookup</button>
+      </div>
+      <div class="qr-id-chips" id="qrChips"></div>
+    </div>
+
+    <!-- Tree Result Card -->
+    <div class="qr-result" id="qrResult" style="display:none">
+      <div class="qr-result-header">
+        <img id="qrResultPhoto" class="qr-result-photo" src="" alt="" style="display:none" onerror="this.style.display='none'"/>
+        <div id="qrResultEmoji" style="font-size:44px;flex-shrink:0">&#x1FAD5;</div>
+        <div>
+          <div class="qr-result-name" id="qrName">Mango Tree</div>
+          <div class="qr-result-loc" id="qrLoc">Izee Business School</div>
+          <div class="qr-result-species" id="qrSpecies">Mangifera indica</div>
+        </div>
+        <div class="qr-result-status" id="qrStatus">Healthy</div>
+      </div>
+
+      <!-- Tree description -->
+      <div id="qrDescription" style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--surface2);border-radius:var(--radius-md);border:1px solid var(--border);margin-bottom:12px"></div>
+
+      <div class="qr-sensors-grid">
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F321;</div><div class="qrs-val" id="qr-temp">27&deg;C</div><div class="qrs-label">Temperature</div></div>
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F4A7;</div><div class="qrs-val" id="qr-moist">68%</div><div class="qrs-label">Soil Moisture</div></div>
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F32B;</div><div class="qrs-val" id="qr-aqi">AQI 42</div><div class="qrs-label">Air Quality</div></div>
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F382;</div><div class="qrs-val" id="qr-age">85 yrs</div><div class="qrs-label">Age</div></div>
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F331;</div><div class="qrs-val" id="qr-co2">22 kg/yr</div><div class="qrs-label">CO&#x2082; Absorbed</div></div>
+        <div class="qr-sensor"><div class="qrs-icon">&#x1F4CD;</div><div class="qrs-val" id="qr-id" style="font-size:11px">IBS-001</div><div class="qrs-label">Tree ID</div></div>
+      </div>
+
+      <button class="qr-speak-btn" id="qrSpeakBtn" onclick="speakTreeQR()">Hear this tree speak</button>
+
+      <div class="lang-switcher">
+        <div class="lang-title">Choose Language</div>
+        <div class="lang-grid" id="langGrid"></div>
+      </div>
+
+      <!-- QR Code Image -->
+      <div class="qr-code-display">
+        <div class="qr-code-title">This tree's QR Code — scan to open on any phone</div>
+        <div id="qrCodeImg" class="qr-code-img"></div>
+        <div class="qr-code-hint">Print &amp; attach to the tree trunk</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WEATHER MOOD ── -->
+  <div id="tab-weather" class="panel">
+    <div id="weather-loading" class="weather-loading">Fetching live weather for Bengaluru...</div>
+    <div id="weather-content" style="display:none">
+      <div class="weather-card">
+        <div class="weather-main">
+          <div class="weather-icon" id="w-icon">&#x26C5;</div>
+          <div class="weather-info">
+            <div class="city">Bengaluru, Karnataka</div>
+            <div class="temp"><span id="w-temp">28</span>&deg;C</div>
+            <div class="cond" id="w-cond">Partly Cloudy</div>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="wdet"><div class="wdet-v" id="w-humid">65%</div><div class="wdet-l">Humidity</div></div>
+          <div class="wdet"><div class="wdet-v" id="w-wind">12 km/h</div><div class="wdet-l">Wind</div></div>
+          <div class="wdet"><div class="wdet-v" id="w-aqi">AQI 48</div><div class="wdet-l">Air Quality</div></div>
+        </div>
+      </div>
+      <button class="mood-speak-all-btn" id="speakAllBtn" onclick="speakAllMoods()">Hear All Trees in This Weather</button>
+      <div class="section-label">How the trees feel today</div>
+      <div class="mood-grid" id="moodGrid"></div>
+    </div>
+  </div>
+
+  <!-- ── CARBON CALC ── -->
+  <div id="tab-carbon" class="panel">
+    <div class="carbon-hero">
+      <div class="carbon-trees" id="c-trees">12 Trees</div>
+      <div class="carbon-sub">needed to offset your annual carbon footprint</div>
+      <div class="carbon-label" id="c-total">Total: 2,400 kg CO&#x2082;/year</div>
+    </div>
+    <div class="calc-grid">
+      <div class="calc-item"><div class="calc-label">Km driven / week</div><div class="calc-val" id="cv-car">100 km</div><input type="range" class="cslider" min="0" max="500" value="100" id="sl-car" oninput="updateCarbon()"></div>
+      <div class="calc-item"><div class="calc-label">Flights per year</div><div class="calc-val" id="cv-fly">2 flights</div><input type="range" class="cslider" min="0" max="20" value="2" id="sl-fly" oninput="updateCarbon()"></div>
+      <div class="calc-item"><div class="calc-label">Meat meals / week</div><div class="calc-val" id="cv-meat">4 meals</div><input type="range" class="cslider" min="0" max="21" value="4" id="sl-meat" oninput="updateCarbon()"></div>
+      <div class="calc-item"><div class="calc-label">Home energy (kWh/mo)</div><div class="calc-val" id="cv-home">200 kWh</div><input type="range" class="cslider" min="0" max="1000" value="200" id="sl-home" oninput="updateCarbon()"></div>
+    </div>
+    <div class="breakdown">
+      <div class="brow"><div class="brow-label">Transport</div><div class="bbar-track"><div class="bbar-fill" id="bb-car"></div></div><div class="brow-val" id="bv-car">520 kg</div></div>
+      <div class="brow"><div class="brow-label">Flights</div><div class="bbar-track"><div class="bbar-fill" id="bb-fly" style="background:#ef9a9a"></div></div><div class="brow-val" id="bv-fly">600 kg</div></div>
+      <div class="brow"><div class="brow-label">Diet</div><div class="bbar-track"><div class="bbar-fill" id="bb-meat" style="background:#fff176"></div></div><div class="brow-val" id="bv-meat">832 kg</div></div>
+      <div class="brow"><div class="brow-label">Home energy</div><div class="bbar-track"><div class="bbar-fill" id="bb-home" style="background:#81d4fa"></div></div><div class="brow-val" id="bv-home">480 kg</div></div>
+    </div>
+    <button class="offset-btn" onclick="alert('Planting plan generated! Trees recommended for your zone in Bengaluru.')">Get My Tree Planting Plan</button>
+  </div>
+
+  <!-- ── COMMUNITY ── -->
+  <div id="tab-community" class="panel">
+    <div class="report-form">
+      <div class="form-row">
+        <label class="form-label">Select Tree</label>
+        <select class="form-select" id="r-tree">
+          <option>Mango Tree — Izee Business School (IBS-001)</option>
+          <option>Neem Tree — Izee Business School (IBS-002)</option>
+          <option>Peepal Tree — Izee Business School (IBS-003)</option>
+          <option>Rain Tree — Jigani Industrial Area (JIG-001)</option>
+          <option>Gulmohar — Jigani Industrial Area (JIG-002)</option>
+          <option>Ashoka Tree — Christ Academy (CAC-001)</option>
+          <option>Coconut Palm — Christ Academy (CAC-002)</option>
+          <option>Indian Oak — Christ Academy (CAC-003)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Issue Type</label>
+        <select class="form-select" id="r-issue">
+          <option>Leaves yellowing / disease</option>
+          <option>Broken branch</option>
+          <option>Pest infestation</option>
+          <option>Construction damage</option>
+          <option>Needs watering</option>
+          <option>Vandalism / littering</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Severity</label>
+        <div class="severity-row">
+          <button class="sev-btn active-sev" onclick="setSev(this,'low')">Low</button>
+          <button class="sev-btn" onclick="setSev(this,'medium')">Medium</button>
+          <button class="sev-btn" onclick="setSev(this,'high')">High — Urgent</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="r-desc" placeholder="Describe what you observed..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitReport()">Submit Report</button>
+    </div>
+    <div class="section-label">Recent Reports</div>
+    <div id="reportFeed"></div>
+  </div>
+
+  <!-- ── LEAF AI ── -->
+  <div id="tab-leaf" class="panel">
+    <div class="ti-hero">
+      <div class="ti-title">Leaf Disease Diagnosis</div>
+      <div class="ti-sub">Upload a leaf photo — AI diagnoses health, disease and care tips</div>
+    </div>
+    <div class="leaf-upload-area">
+      <input type="file" accept="image/*" onchange="handleLeafUpload(event)"/>
+      <div class="upload-icon">&#x1F343;</div>
+      <div class="upload-title">Upload a Leaf Photo</div>
+      <div class="upload-sub">Supports any plant or tree leaf</div>
+    </div>
+    <img id="leafPreview" class="leaf-preview"/>
+    <button id="analyzeBtn" class="analyze-btn" onclick="analyzeLeaf()">Analyze with AI</button>
+    <div class="section-label">Or try a sample</div>
+    <div class="demo-samples">
+      <div class="dsample" onclick="runDemoLeaf('healthy')"><div class="dsample-icon">&#x1F331;</div><div class="dsample-label">Healthy</div></div>
+      <div class="dsample" onclick="runDemoLeaf('yellow')"><div class="dsample-icon">&#x1F342;</div><div class="dsample-label">Yellowing</div></div>
+      <div class="dsample" onclick="runDemoLeaf('pest')"><div class="dsample-icon">&#x1F41B;</div><div class="dsample-label">Pest damage</div></div>
+      <div class="dsample" onclick="runDemoLeaf('fungal')"><div class="dsample-icon">&#x1F344;</div><div class="dsample-label">Fungal spots</div></div>
+    </div>
+    <div class="ai-result" id="aiResult">
+      <div class="ai-result-title"><span id="aiStatusIcon"></span> <span id="aiResultTitle">Analysis Result</span></div>
+      <div class="ai-result-body" id="aiResultBody"></div>
+    </div>
+  </div>
+
+  <!-- ── WORLD TREES ── (55 trees) -->
+  <div id="tab-worldtrees" class="panel">
+    <div class="wt-hero">
+      <div class="wt-title">World Trees Encyclopedia</div>
+      <div class="wt-sub">Explore 55 trees from 6 continents</div>
+    </div>
+    <div class="wt-search-row">
+      <input class="wt-search" id="wtSearch" placeholder="Search by name, country, climate..." oninput="filterWorldTrees()"/>
+      <div class="wt-filters" id="wtFilters"></div>
+    </div>
+    <div class="wt-stats-row" id="wtStats"></div>
+    <div class="wt-grid" id="wtGrid"></div>
+    <div id="wtModal" class="wt-modal" style="display:none">
+      <div class="wt-modal-content">
+        <button class="wt-modal-close" onclick="closeWTModal()">&#x2715;</button>
+        <div id="wtModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEADERBOARD ── -->
+  <div id="tab-leaderboard" class="panel">
+    <div class="lb-header">
+      <div class="lb-title">Eco Champions</div>
+      <div class="lb-sub">Schools &amp; communities competing to protect Bengaluru's trees</div>
+    </div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchLb('schools',this)">Schools</button>
+      <button class="lb-tab" onclick="switchLb('users',this)">Users</button>
+      <button class="lb-tab" onclick="switchLb('zones',this)">Zones</button>
+    </div>
+    <div id="lb-list"></div>
+    <div class="lb-your-score">
+      <div class="lby-label">Your Score</div>
+      <div class="lby-points"><span id="lby-num">240</span> pts</div>
+      <div class="lby-rank">Rank #<span id="lby-rank">12</span> &middot; Keep going!</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/treeTalk.js"></script>
+<script src="js/map.js"></script>
+<script src="js/qrScanner.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/carbon.js"></script>
+<script src="js/community.js"></script>
+<script src="js/leafAI.js"></script>
+<script src="js/leaderboard.js"></script>
+<script src="js/natureSounds.js"></script>
+<script src="js/language.js"></script>
+<script src="js/worldTrees.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#ffffff"/>
+<title>Talking Trees — Smart City AI & IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --font-ui:'Sora',sans-serif;--font-d:'Lora',serif;--font-mono:'JetBrains Mono',monospace;
+  --bg:#f8faf8;--bg2:#fff;--bg3:#f0f5f0;--surface:#fff;--surface2:#f4f8f4;
+  --text:#0f1f0f;--text2:#3d5c3d;--text3:#7a9c7a;--text4:#b0c8b0;
+  --green:#2d6a2d;--gm:#3d8b3d;--gl:#5aad5a;--gp:#e8f5e8;--gg:rgba(45,106,45,0.08);
+  --b1:rgba(45,106,45,0.12);--b2:rgba(45,106,45,0.22);--b3:rgba(45,106,45,0.38);
+  --red:#c0392b;--amber:#d4830a;--blue:#2563ae;
+  --sh:0 1px 3px rgba(0,0,0,0.06);--shm:0 4px 12px rgba(0,0,0,0.08);--shl:0 10px 30px rgba(0,0,0,0.1);
+  --r:6px;--rm:10px;--rl:14px;--rx:20px;
+}
+[data-theme="dark"]{
+  --bg:#0c140c;--bg2:#111a11;--bg3:#172217;--surface:#172217;--surface2:#1e2e1e;
+  --text:#e8f5e8;--text2:#a8c8a8;--text3:#6a9a6a;--text4:#3d5c3d;
+  --green:#5aad5a;--gm:#4d9a4d;--gl:#7bc97b;--gp:rgba(90,173,90,0.12);--gg:rgba(90,173,90,0.1);
+  --b1:rgba(90,173,90,0.12);--b2:rgba(90,173,90,0.2);--b3:rgba(90,173,90,0.32);
+  --sh:0 1px 3px rgba(0,0,0,0.3);--shm:0 4px 12px rgba(0,0,0,0.4);--shl:0 10px 30px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s}
+button{cursor:pointer;font-family:var(--font-ui)}
+input,select,textarea{font-family:var(--font-ui)}
+img{display:block}
+
+/* APP SHELL */
+.app{max-width:480px;margin:0 auto;background:var(--bg2);min-height:100vh;box-shadow:var(--shl);position:relative;overflow:hidden}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:52px;background:var(--bg2);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:200;transition:background 0.3s}
+.topbar-l{display:flex;align-items:center;gap:10px}
+.hbtn{width:34px;height:34px;border:1px solid var(--b2);border-radius:var(--r);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all 0.2s}
+.hbtn:hover{background:var(--gp)}
+.hl{width:14px;height:1.5px;background:var(--text2);border-radius:1px;transition:all 0.2s}
+.hbtn.open .hl:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+.hbtn.open .hl:nth-child(2){opacity:0}
+.hbtn.open .hl:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+.logo{font-family:var(--font-d);font-size:17px;font-weight:600;color:var(--text)}
+.logo span{color:var(--green)}
+.topbar-r{display:flex;align-items:center;gap:6px}
+.live-pill{display:inline-flex;align-items:center;gap:4px;background:var(--gp);border:1px solid var(--b2);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:500;color:var(--green)}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--gl);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.theme-btn{width:32px;height:32px;border:1px solid var(--b2);border-radius:var(--r);background:transparent;color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.theme-btn:hover{background:var(--gp)}
+.nature-btn{height:30px;border:1px solid var(--b2);border-radius:var(--r);background:transparent;color:var(--text3);font-size:10px;font-weight:500;padding:0 8px;display:flex;align-items:center;gap:4px;transition:all 0.2s;white-space:nowrap}
+.nature-btn:hover,.nature-btn.on{background:var(--gp);color:var(--green);border-color:var(--b3)}
+
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:300;opacity:0;pointer-events:none;transition:opacity 0.25s}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:265px;background:var(--bg2);z-index:400;transform:translateX(-100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;max-width:80vw}
+.drawer.open{transform:translateX(0)}
+.dr-hdr{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.dr-logo{font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--text)}
+.dr-logo span{color:var(--green)}
+.dr-x{background:none;border:none;font-size:18px;color:var(--text3);padding:2px 6px;border-radius:var(--r)}
+.dr-x:hover{background:var(--bg3);color:var(--text)}
+.dr-nav{flex:1;overflow-y:auto;padding:6px 0}
+.dr-sec{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text4);padding:10px 18px 3px}
+.di{display:flex;align-items:center;gap:10px;padding:9px 18px;border:none;background:none;width:100%;text-align:left;color:var(--text2);font-size:12px;font-weight:400;cursor:pointer;transition:all 0.15s;position:relative}
+.di:hover{background:var(--bg3);color:var(--text)}
+.di.act{background:var(--gp);color:var(--green);font-weight:500}
+.di.act::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--green);border-radius:0 2px 2px 0}
+.di-ic{width:30px;height:30px;border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.15s}
+.di.act .di-ic{background:var(--gp)}
+.di-badge{font-size:9px;padding:1px 6px;border-radius:10px;background:#e3f2fd;color:#1565c0;margin-left:auto}
+.dr-foot{padding:12px 18px;border-top:1px solid var(--b1);font-size:9px;color:var(--text4);flex-shrink:0}
+
+/* TAB HEADER */
+.tab-hdr{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--b1);background:var(--bg2)}
+.th-ic{width:26px;height:26px;border-radius:var(--r);background:var(--gp);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:12px}
+.th-title{font-size:13px;font-weight:600;color:var(--text)}
+.th-sub{font-size:10px;color:var(--text3);margin-left:auto}
+
+/* PANELS */
+.panel{display:none;padding:16px;animation:fi 0.25s ease}
+.panel.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.sec-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text4);margin-bottom:8px}
+
+/* BOTTOM NAV */
+.bot-nav{display:flex;border-top:1px solid var(--b1);background:var(--bg2);position:sticky;bottom:0;z-index:10}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;border:none;background:none;gap:2px;cursor:pointer;transition:all 0.15s}
+.bn:hover{background:var(--bg3)}
+.bn.act .bn-ic,.bn.act .bn-lb{color:var(--green)}
+.bn-ic{font-size:16px;color:var(--text4)}
+.bn-lb{font-size:9px;color:var(--text4)}
+
+/* TREE TALK */
+.ttabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.ttabs::-webkit-scrollbar{display:none}
+.ttab{padding:5px 12px;border-radius:var(--rm);border:1px solid var(--b1);background:var(--surface);color:var(--text3);font-size:11px;font-weight:500;white-space:nowrap;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.ttab img{width:18px;height:18px;border-radius:3px;object-fit:cover}
+.ttab:hover{border-color:var(--b3);color:var(--text2)}
+.ttab.act{background:var(--gp);color:var(--green);border-color:var(--b2);font-weight:600}
+.two-col{display:grid;grid-template-columns:1fr 220px;gap:14px}
+@media(max-width:520px){.two-col{grid-template-columns:1fr}}
+.tree-card{background:var(--surface2);border:1px solid var(--b1);border-radius:var(--rl);padding:16px;text-align:center;margin-bottom:12px}
+.tree-photo{width:88px;height:88px;border-radius:var(--rm);object-fit:cover;margin:0 auto 10px;border:2px solid var(--b2);box-shadow:var(--sh)}
+.tree-name{font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text)}
+.tree-lat{font-size:11px;color:var(--text3);font-style:italic;margin-top:2px}
+.tree-age{font-size:10px;color:var(--green);margin-top:6px;background:var(--gp);display:inline-block;padding:3px 10px;border-radius:20px;border:1px solid var(--b2)}
+.vbar-wrap{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--gp);border:1px solid var(--b2);border-radius:var(--rm);margin-bottom:8px}
+.vbars{display:flex;align-items:center;gap:2px}
+.vb{width:2.5px;border-radius:1px;background:var(--green);animation:vw 0.8s ease-in-out infinite}
+.vb:nth-child(1){height:7px}.vb:nth-child(2){height:13px;animation-delay:0.1s}.vb:nth-child(3){height:9px;animation-delay:0.2s}.vb:nth-child(4){height:15px;animation-delay:0.3s}.vb:nth-child(5){height:7px;animation-delay:0.15s}
+@keyframes vw{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1)}}
+.vbar-txt{font-size:11px;color:var(--green);flex:1;font-weight:500}
+.vbar-stop{background:none;border:1px solid var(--b2);border-radius:20px;padding:2px 8px;font-size:10px;color:var(--text3)}
+.chat-area{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:10px;height:180px;overflow-y:auto;margin-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--b1) transparent}
+.msg{display:flex;gap:7px;margin-bottom:8px;align-items:flex-start}
+.av{width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--b2);background:var(--gp);display:flex;align-items:center;justify-content:center;font-size:12px}
+.av img{width:100%;height:100%;object-fit:cover}
+.bub{background:var(--surface2);border:1px solid var(--b1);border-radius:0 var(--rm) var(--rm) var(--rm);padding:7px 30px 7px 10px;font-size:12px;line-height:1.55;color:var(--text);flex:1;position:relative}
+.bub.u{background:var(--gp);border-color:var(--b2);color:var(--green);border-radius:var(--rm) 0 var(--rm) var(--rm);padding-right:10px}
+.spk-b{position:absolute;right:5px;top:5px;background:none;border:none;font-size:11px;color:var(--text4);padding:2px 3px;border-radius:3px;line-height:1}
+.spk-b:hover{color:var(--green);background:var(--gp)}
+.inp-row{display:flex;gap:6px}
+.cinput{flex:1;background:var(--surface);border:1px solid var(--b2);border-radius:var(--rx);padding:9px 14px;color:var(--text);font-size:12px;outline:none;transition:all 0.2s}
+.cinput:focus{border-color:var(--gl);box-shadow:0 0 0 3px var(--gg)}
+.cinput::placeholder{color:var(--text4)}
+.sbtn{background:var(--green);border:none;border-radius:var(--rx);padding:9px 16px;color:#fff;font-size:12px;font-weight:500;transition:all 0.2s}
+.sbtn:hover{background:var(--gm)}
+.sensor-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:12px;margin-bottom:10px;box-shadow:var(--sh)}
+.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.slbl{font-size:10px;color:var(--text3);font-weight:500}
+.sval{font-size:14px;font-weight:600;color:var(--text)}
+.sunit{font-size:9px;color:var(--text4)}
+.btrack{background:var(--bg3);border-radius:3px;height:3px;margin-bottom:9px}
+.bfill{height:3px;border-radius:3px;transition:width 1s ease}
+.health-b{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);margin-bottom:8px;box-shadow:var(--sh)}
+.hdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.htext{font-size:12px;font-weight:600;color:var(--text)}
+.hsub{font-size:10px;color:var(--text3)}
+.eco-box{background:var(--gp);border:1px solid var(--b2);border-radius:var(--rm);padding:10px;text-align:center}
+.eco-n{font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--green)}
+.eco-l{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-top:1px}
+
+/* MAP */
+.map-wrap{border-radius:var(--rl);overflow:hidden;border:1px solid var(--b1);box-shadow:var(--sh);margin-bottom:10px}
+.map-wrap img{width:100%;height:200px;object-fit:cover;display:block}
+.map-legend{display:flex;gap:14px;padding:8px 12px;background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);font-size:11px;margin-bottom:10px}
+.leg-i{display:flex;align-items:center;gap:5px;color:var(--text2)}
+.ldot2{width:7px;height:7px;border-radius:50%}
+.map-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.mstat{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);padding:10px;text-align:center;box-shadow:var(--sh)}
+.mstat-n{font-family:var(--font-d);font-size:20px;font-weight:600;color:var(--green)}
+.mstat-l{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px}
+.loc-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:13px;margin-bottom:8px;box-shadow:var(--sh);transition:all 0.2s}
+.loc-card:hover{border-color:var(--b3)}
+.lc-h{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.lc-ic{width:34px;height:34px;border-radius:var(--r);background:var(--gp);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.lc-nm{font-size:12px;font-weight:600;color:var(--text)}
+.lc-co{font-size:9px;color:var(--text4);font-family:var(--font-mono)}
+.lc-row{display:flex;justify-content:space-between;margin-bottom:3px}
+.lc-l{font-size:10px;color:var(--text3)}
+.lc-v{font-size:10px;font-weight:600;color:var(--text2)}
+.lc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.lc-tag{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--gp);color:var(--green);border:1px solid var(--b2)}
+.lc-tag.g{background:var(--bg3);color:var(--text3);border-color:var(--b1)}
+
+/* QR */
+.qr-hero{padding:4px 0 14px}
+.qr-ht{font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text)}
+.qr-hs{font-size:12px;color:var(--text3);margin-top:4px}
+.qr-scan{border:1px solid var(--b2);border-radius:var(--rl);height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;background:var(--surface2);position:relative;overflow:hidden}
+.qr-frame{width:100px;height:100px;border:2px solid var(--green);border-radius:var(--rm)}
+.qr-scanline{position:absolute;left:calc(50% - 50px);width:100px;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:scan2 2s linear infinite}
+@keyframes scan2{0%{top:calc(50% - 50px)}100%{top:calc(50% + 50px)}}
+.qr-hint{font-size:10px;color:var(--text3)}
+.qr-btns{display:flex;gap:6px;margin-bottom:10px}
+.qr-btn{flex:1;padding:10px;border-radius:var(--rm);border:1px solid var(--b2);background:var(--gp);color:var(--green);font-size:12px;font-weight:500;transition:all 0.2s}
+.qr-btn:hover{background:var(--green);color:#fff}
+.qr-manual{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:12px;margin-bottom:12px}
+.qr-manual-t{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.qr-inp-row{display:flex;gap:6px;margin-bottom:8px}
+.qr-inp{flex:1;background:var(--surface2);border:1px solid var(--b2);border-radius:var(--rx);padding:8px 12px;color:var(--text);font-size:12px;outline:none}
+.qr-inp:focus{border-color:var(--gl);box-shadow:0 0 0 3px var(--gg)}
+.qr-lkup{background:var(--green);border:none;border-radius:var(--rx);padding:8px 14px;color:#fff;font-size:12px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{background:var(--surface2);border:1px solid var(--b1);border-radius:20px;padding:3px 9px;font-size:10px;font-family:var(--font-mono);color:var(--text3);cursor:pointer;transition:all 0.15s}
+.chip:hover,.chip.sel{background:var(--gp);border-color:var(--b2);color:var(--green)}
+.qr-result{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:14px;box-shadow:var(--sh);animation:fi 0.3s ease}
+.qrr-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.qrr-img{width:54px;height:54px;border-radius:var(--rm);object-fit:cover;border:1px solid var(--b2);flex-shrink:0}
+.qrr-name{font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--text)}
+.qrr-loc{font-size:11px;color:var(--text3);margin-top:2px}
+.qrr-sp{font-size:10px;color:var(--text4);font-style:italic;margin-top:1px}
+.qrr-status{margin-left:auto;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--gp);color:var(--green);border:1px solid var(--b2);white-space:nowrap;flex-shrink:0}
+.qrr-sensors{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.qrr-s{background:var(--surface2);border:1px solid var(--b1);border-radius:var(--rm);padding:8px;text-align:center}
+.qrrs-v{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
+.qrrs-l{font-size:9px;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:0.4px}
+.qrr-spk{width:100%;padding:10px;border-radius:var(--rm);border:1px solid var(--b2);background:var(--gp);color:var(--green);font-size:12px;font-weight:600;transition:all 0.2s;margin-bottom:12px}
+.qrr-spk:hover{background:var(--green);color:#fff}
+.lang-sw{background:var(--surface2);border:1px solid var(--b1);border-radius:var(--rm);padding:10px;margin-bottom:12px}
+.lang-t{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.lang-grid{display:flex;flex-wrap:wrap;gap:4px}
+.langbtn{background:var(--surface);border:1px solid var(--b1);border-radius:20px;padding:3px 8px;color:var(--text3);font-size:10px;font-weight:500;display:flex;align-items:center;gap:3px;transition:all 0.15s;cursor:pointer}
+.langbtn:hover,.langbtn.act{background:var(--green);color:#fff;border-color:var(--green)}
+.qr-code-box{text-align:center;padding:12px;background:var(--surface2);border:1px solid var(--b1);border-radius:var(--rm)}
+.qr-code-t{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.qr-code-img{display:inline-block;background:#fff;padding:6px;border-radius:var(--rm);border:1px solid var(--b1)}
+.qr-code-h{font-size:10px;color:var(--text4);margin-top:6px}
+
+/* WEATHER */
+.w-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.w-main{display:flex;align-items:center;gap:18px}
+.w-icon{font-size:48px}
+.w-city{font-family:var(--font-d);font-size:15px;font-weight:600;color:var(--text)}
+.w-temp{font-size:32px;font-weight:600;color:var(--text);font-family:var(--font-d)}
+.w-cond{font-size:12px;color:var(--text3)}
+.w-dets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.wdet{background:var(--surface2);border-radius:var(--rm);padding:8px;text-align:center}
+.wdet-v{font-size:14px;font-weight:600;color:var(--text)}
+.wdet-l{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:0.4px;margin-top:1px}
+.mood-all-btn{width:100%;padding:10px;background:var(--gp);border:1px solid var(--b2);border-radius:var(--rm);color:var(--green);font-size:12px;font-weight:600;transition:all 0.2s;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px}
+.mood-all-btn:hover{background:var(--green);color:#fff}
+.mood-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:12px;margin-bottom:8px;box-shadow:var(--sh);transition:all 0.2s}
+.mood-card.spk{border-color:var(--gl);background:var(--gp)}
+.mood-em{font-size:22px;margin-bottom:5px}
+.mood-tn{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.mood-msg{font-size:11px;color:var(--text3);line-height:1.55;margin-bottom:8px}
+.mood-spk{width:100%;padding:6px;border-radius:var(--rm);border:1px solid var(--b2);background:var(--surface2);color:var(--text3);font-size:10px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all 0.15s}
+.mood-spk:hover{background:var(--gp);color:var(--green)}
+.mood-spk.on{background:var(--gp);color:var(--green);border-color:var(--b2)}
+
+/* CARBON */
+.carbon-hero{text-align:center;padding:8px 0 16px}
+.carbon-big{font-family:var(--font-d);font-size:44px;font-weight:600;color:var(--green)}
+.carbon-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.carbon-lbl{font-size:11px;color:var(--text4);margin-top:3px;font-weight:500}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+@media(max-width:360px){.calc-grid{grid-template-columns:1fr}}
+.calc-item{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);padding:10px}
+.calc-l{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px}
+.calc-v{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.cslider{width:100%;accent-color:var(--green);cursor:pointer}
+.breakdown{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:14px}
+.brow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.brow:last-child{margin-bottom:0}
+.brow-l{font-size:11px;color:var(--text2);font-weight:500;width:100px;flex-shrink:0}
+.brow-v{font-size:11px;font-weight:600;color:var(--text);width:58px;text-align:right;flex-shrink:0}
+.bbar-t{flex:1;height:4px;background:var(--bg3);border-radius:3px;margin:0 8px}
+.bbar-f{height:4px;border-radius:3px;background:var(--green);transition:width 0.5s}
+.offset-btn{width:100%;padding:12px;background:var(--green);border:none;border-radius:var(--rm);color:#fff;font-size:13px;font-weight:600;margin-top:12px;transition:all 0.2s}
+.offset-btn:hover{background:var(--gm);transform:translateY(-1px)}
+
+/* COMMUNITY */
+.rep-form{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:14px;margin-bottom:14px;box-shadow:var(--sh)}
+.f-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;display:block}
+.f-sel,.f-ta{width:100%;background:var(--surface2);border:1px solid var(--b2);border-radius:var(--rm);padding:8px 10px;color:var(--text);font-size:12px;outline:none;transition:all 0.2s;margin-bottom:10px}
+.f-sel:focus,.f-ta:focus{border-color:var(--gl);box-shadow:0 0 0 3px var(--gg)}
+.f-sel option{background:var(--surface)}
+.f-ta{height:70px;resize:none}
+.sev-row{display:flex;gap:5px;margin-bottom:10px}
+.sev-btn{flex:1;padding:7px;border-radius:var(--rm);border:1px solid var(--b1);background:var(--surface2);color:var(--text3);font-size:10px;font-weight:500;transition:all 0.15s;text-align:center}
+.sev-btn.low{border-color:#2e7d32;background:#e8f5e9;color:#1b5e20}
+.sev-btn.med{border-color:#e65100;background:#fff3e0;color:#bf360c}
+.sev-btn.hi{border-color:var(--red);background:#ffebee;color:#b71c1c}
+[data-theme="dark"] .sev-btn.low{background:rgba(46,125,50,0.15);color:#a5d6a7}
+[data-theme="dark"] .sev-btn.med{background:rgba(230,81,0,0.15);color:#ffcc80}
+[data-theme="dark"] .sev-btn.hi{background:rgba(198,40,40,0.15);color:#ef9a9a}
+.sub-btn{width:100%;padding:11px;background:var(--green);border:none;border-radius:var(--rm);color:#fff;font-size:13px;font-weight:600;transition:all 0.2s}
+.sub-btn:hover{background:var(--gm)}
+.rep-item{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);padding:10px 12px;margin-bottom:6px;display:flex;gap:9px;align-items:flex-start;box-shadow:var(--sh)}
+.ri-t{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.ri-m{font-size:10px;color:var(--text3)}
+.ri-s{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;margin-top:4px;display:inline-block}
+.rs-open{background:#ffebee;color:#c62828}
+.rs-rev{background:#fff8e1;color:#e65100}
+.rs-done{background:#e8f5e9;color:#1b5e20}
+[data-theme="dark"] .rs-open{background:rgba(198,40,40,0.12);color:#ef9a9a}
+[data-theme="dark"] .rs-rev{background:rgba(230,81,0,0.12);color:#ffcc80}
+[data-theme="dark"] .rs-done{background:rgba(46,125,50,0.12);color:#a5d6a7}
+
+/* LEAF AI */
+.upload-area{border:1.5px dashed var(--b2);border-radius:var(--rl);padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;transition:all 0.2s;background:var(--surface2)}
+.upload-area:hover{background:var(--gp);border-color:var(--gl)}
+.up-ic{font-size:30px;margin-bottom:7px}
+.up-t{font-size:13px;font-weight:600;color:var(--text)}
+.up-s{font-size:11px;color:var(--text3);margin-top:3px}
+.samples{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
+.samp{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);padding:9px;text-align:center;cursor:pointer;transition:all 0.2s}
+.samp:hover{background:var(--gp);border-color:var(--b2)}
+.samp-ic{font-size:20px;margin-bottom:4px}
+.samp-l{font-size:9px;font-weight:500;color:var(--text3)}
+.ai-result{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:13px;display:none;box-shadow:var(--sh)}
+.air-t{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.air-b{font-size:12px;color:var(--text2);line-height:1.65}
+.conf-row{display:flex;align-items:center;gap:7px;margin-top:9px}
+.conf-l{font-size:10px;font-weight:600;color:var(--text3);width:75px}
+.conf-bar{flex:1;height:4px;background:var(--bg3);border-radius:3px}
+.conf-fill{height:4px;border-radius:3px;background:var(--green);transition:width 0.8s}
+.care-t{margin-top:10px;font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.care-tip{font-size:11px;color:var(--text2);margin-bottom:4px;padding-left:10px;position:relative}
+.care-tip::before{content:'–';position:absolute;left:0;color:var(--green)}
+
+/* TREE IDENTIFIER */
+.ti-up{border:1.5px dashed var(--b2);border-radius:var(--rl);padding:22px;text-align:center;cursor:pointer;margin-bottom:8px;transition:all 0.2s;background:var(--surface2)}
+.ti-up:hover{background:var(--gp);border-color:var(--gl)}
+.ti-btns{display:flex;gap:6px;margin-bottom:10px}
+.ti-btn{flex:1;padding:9px;border-radius:var(--rm);border:1px solid var(--b2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:500;transition:all 0.2s}
+.ti-btn:hover{background:var(--gp);color:var(--green)}
+.ti-result{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:14px;box-shadow:var(--sh)}
+.tir-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.tir-em{font-size:36px;flex-shrink:0}
+.tir-name{font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--text)}
+.tir-lat{font-size:11px;color:var(--text3);font-style:italic;margin-top:2px}
+.tir-orig{font-size:10px;color:var(--text3);margin-top:1px}
+.tir-conf{margin-left:auto;background:var(--gp);color:var(--green);border:1px solid var(--b2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.ti-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+.ti-tabs::-webkit-scrollbar{display:none}
+.ti-tab{padding:5px 12px;border-radius:20px;border:1px solid var(--b1);background:var(--surface2);color:var(--text3);font-size:11px;font-weight:500;white-space:nowrap;transition:all 0.2s;cursor:pointer}
+.ti-tab.act{background:var(--green);color:#fff;border-color:var(--green)}
+.ti-content{font-size:12px;color:var(--text2);line-height:1.65;min-height:60px}
+.ti-spk{width:100%;padding:10px;border-radius:var(--rm);border:1px solid var(--b2);background:var(--gp);color:var(--green);font-size:12px;font-weight:600;margin-top:12px;transition:all 0.2s}
+.ti-spk:hover{background:var(--green);color:#fff}
+
+/* WORLD TREES */
+.wt-search{width:100%;background:var(--surface);border:1px solid var(--b2);border-radius:var(--rm);padding:9px 14px;color:var(--text);font-size:12px;outline:none;margin-bottom:8px;transition:all 0.2s}
+.wt-search:focus{border-color:var(--gl);box-shadow:0 0 0 3px var(--gg)}
+.wt-search::placeholder{color:var(--text4)}
+.wt-filters{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.wt-f{padding:4px 10px;border-radius:20px;border:1px solid var(--b1);background:var(--surface2);color:var(--text3);font-size:10px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.wt-f:hover,.wt-f.act{background:var(--green);color:#fff;border-color:var(--green)}
+.wt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wt-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);padding:10px;cursor:pointer;transition:all 0.2s;box-shadow:var(--sh)}
+.wt-card:hover{border-color:var(--b3);transform:translateY(-2px);box-shadow:var(--shm)}
+.wt-img{width:100%;height:60px;object-fit:cover;border-radius:5px;margin-bottom:7px;background:var(--surface2)}
+.wt-n{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.wt-l{font-size:9px;color:var(--text4);font-style:italic;margin-bottom:5px}
+.wt-tags{display:flex;flex-wrap:wrap;gap:3px}
+.wt-tag{font-size:9px;font-weight:500;padding:2px 6px;border-radius:10px;background:var(--surface2);border:1px solid var(--b1);color:var(--text3)}
+.wt-modal-wrap{display:none;min-height:400px;background:rgba(0,0,0,0.5);align-items:flex-end;justify-content:center;position:relative}
+.wt-modal-wrap.show{display:flex}
+.wt-modal{background:var(--bg2);border-radius:var(--rl) var(--rl) 0 0;padding:18px;width:100%;max-height:80vh;overflow-y:auto}
+.wtm-img{width:100%;height:140px;object-fit:cover;border-radius:var(--rm);margin-bottom:12px}
+.wtm-name{font-family:var(--font-d);font-size:20px;font-weight:600;color:var(--text);margin-bottom:2px}
+.wtm-lat{font-size:11px;color:var(--text3);font-style:italic;margin-bottom:10px}
+.wtm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.wtm-stat{background:var(--surface2);border-radius:var(--rm);padding:8px;text-align:center}
+.wtms-v{font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px}
+.wtms-l{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase}
+.wtm-sec{margin-bottom:8px;padding:9px 11px;background:var(--surface2);border-radius:var(--rm);border-left:2px solid var(--gl)}
+.wtm-sl{font-size:9px;font-weight:600;color:var(--text4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px}
+.wtm-st{font-size:11px;color:var(--text2);line-height:1.6}
+.wtm-close{width:100%;padding:10px;background:var(--green);border:none;border-radius:var(--rm);color:#fff;font-size:13px;font-weight:600;margin-top:10px;cursor:pointer}
+.wtm-spk{width:100%;padding:10px;background:var(--gp);border:1px solid var(--b2);border-radius:var(--rm);color:var(--green);font-size:12px;font-weight:600;margin-bottom:8px;cursor:pointer;transition:all 0.2s}
+.wtm-spk:hover{background:var(--green);color:#fff}
+
+/* LEADERBOARD */
+.lb-hdr{text-align:center;padding:8px 0 14px}
+.lb-t{font-family:var(--font-d);font-size:20px;font-weight:600;color:var(--text)}
+.lb-s{font-size:11px;color:var(--text3);margin-top:3px}
+.lb-tabs-r{display:flex;gap:5px;margin-bottom:12px}
+.lb-tab{flex:1;padding:7px;border-radius:var(--rm);border:1px solid var(--b1);background:var(--surface2);color:var(--text3);font-size:11px;font-weight:500;transition:all 0.15s;text-align:center;cursor:pointer}
+.lb-tab.act{background:var(--green);color:#fff;border-color:var(--green)}
+.lb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--b1);border-radius:var(--rm);margin-bottom:5px;box-shadow:var(--sh)}
+.lb-item.gold{border-color:#ffd700;background:#fffde7}
+.lb-item.silver{border-color:#b0bec5;background:#f5f5f5}
+.lb-item.bronze{border-color:#cd7f32;background:#fbe9e7}
+[data-theme="dark"] .lb-item.gold{background:rgba(255,215,0,0.06)}
+[data-theme="dark"] .lb-item.silver{background:rgba(176,190,197,0.06)}
+[data-theme="dark"] .lb-item.bronze{background:rgba(205,127,50,0.06)}
+.lb-rank{font-size:15px;width:24px;text-align:center;flex-shrink:0}
+.lb-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--gp);border:1px solid var(--b2);flex-shrink:0}
+.lb-info{flex:1}
+.lb-name{font-size:12px;font-weight:600;color:var(--text)}
+.lb-meta{font-size:10px;color:var(--text3);margin-top:1px}
+.lb-pts{font-size:14px;font-weight:600;color:var(--green);font-family:var(--font-d)}
+.lb-badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--gp);color:var(--green);border:1px solid var(--b2);margin-top:2px;display:inline-block}
+.lb-my{background:var(--gp);border:1px solid var(--b2);border-radius:var(--rl);padding:14px;text-align:center;margin-top:12px}
+.lbm-l{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.lbm-pts{font-family:var(--font-d);font-size:30px;font-weight:600;color:var(--green)}
+.lbm-r{font-size:11px;color:var(--text3);margin-top:3px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- DRAWER OVERLAY -->
+  <div class="drawer-overlay" id="dov" onclick="closeDr()"></div>
+
+  <!-- DRAWER -->
+  <div class="drawer" id="drawer">
+    <div class="dr-hdr">
+      <div class="dr-logo">Talking <span>Trees</span></div>
+      <button class="dr-x" onclick="closeDr()">&#x2715;</button>
+    </div>
+    <div class="dr-nav">
+      <div class="dr-sec">Main</div>
+      <button class="di act" id="di-talk" onclick="goTab('talk',this)"><div class="di-ic">&#x1F333;</div>Tree Talk<span class="di-badge">AI</span></button>
+      <button class="di" id="di-map" onclick="goTab('map',this)"><div class="di-ic">&#x1F5FA;&#xFE0F;</div>City Map</button>
+      <button class="di" id="di-qr" onclick="goTab('qr',this)"><div class="di-ic">&#x1F4F1;</div>QR Scanner</button>
+      <button class="di" id="di-weather" onclick="goTab('weather',this)"><div class="di-ic">&#x1F326;&#xFE0F;</div>Weather Mood</button>
+      <div class="dr-sec">Tools</div>
+      <button class="di" id="di-carbon" onclick="goTab('carbon',this)"><div class="di-ic">&#x1F9EE;</div>Carbon Calculator</button>
+      <button class="di" id="di-community" onclick="goTab('community',this)"><div class="di-ic">&#x1F4E2;</div>Community Reports</button>
+      <div class="dr-sec">AI Features</div>
+      <button class="di" id="di-leaf" onclick="goTab('leaf',this)"><div class="di-ic">&#x1F343;</div>Leaf Diagnosis<span class="di-badge">AI</span></button>
+      <button class="di" id="di-treeid" onclick="goTab('treeid',this)"><div class="di-ic">&#x1F4F8;</div>Tree Identifier<span class="di-badge">AI</span></button>
+      <button class="di" id="di-world" onclick="goTab('world',this)"><div class="di-ic">&#x1F30D;</div>World Trees</button>
+      <div class="dr-sec">Community</div>
+      <button class="di" id="di-lb" onclick="goTab('lb',this)"><div class="di-ic">&#x1F3C6;</div>Leaderboard</button>
+    </div>
+    <div class="dr-foot">Izee Business School &middot; Bengaluru &middot; Smart City Initiative</div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="hbtn" id="hbtn" onclick="toggleDr()">
+        <div class="hl"></div><div class="hl"></div><div class="hl"></div>
+      </button>
+      <div class="logo">Talking <span>Trees</span></div>
+    </div>
+    <div class="topbar-r">
+      <button class="nature-btn" id="natBtn" onclick="toggleNature()">&#x1F343; Nature</button>
+      <div class="live-pill"><div class="ldot"></div>Live IoT</div>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">&#9788;</button>
+    </div>
+  </div>
+
+  <!-- TAB HEADER -->
+  <div class="tab-hdr">
+    <div class="th-ic" id="thIc">&#x1F333;</div>
+    <div class="th-title" id="thTitle">Tree Talk</div>
+    <div class="th-sub" id="thSub">AI-powered chat</div>
+  </div>
+
+  <!-- ══════════════ PANELS ══════════════ -->
+
+  <!-- TREE TALK -->
+  <div class="panel active" id="p-talk">
+    <div class="ttabs" id="treeTabs"></div>
+    <div class="two-col">
+      <div>
+        <div class="tree-card">
+          <img id="treePhoto" class="tree-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/200px-Hapus_Mango.jpg" alt="Mango Tree"/>
+          <div class="tree-name" id="treeName">Mango Tree</div>
+          <div class="tree-lat" id="treeLat">Mangifera indica</div>
+          <div class="tree-age" id="treeAge">Est. 85 yrs &middot; 22 kg CO&#x2082;/yr</div>
+        </div>
+        <div class="vbar-wrap" id="vbarWrap">
+          <div class="vbars"><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div></div>
+          <div class="vbar-txt" id="vbarTxt">Tree is speaking...</div>
+          <button class="vbar-stop" onclick="stopVoice()">Stop</button>
+        </div>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="inp-row">
+          <input class="cinput" id="chatInput" placeholder="Ask the tree something..." onkeypress="if(event.key==='Enter')sendMsg()"/>
+          <button class="sbtn" onclick="sendMsg()">Ask</button>
+        </div>
+      </div>
+      <div>
+        <div class="sensor-card">
+          <div class="srow"><div class="slbl">Temperature</div><div><span class="sval" id="sTemp">28</span><span class="sunit">&deg;C</span></div></div>
+          <div class="btrack"><div class="bfill" id="bTemp" style="width:56%;background:#ef9a9a"></div></div>
+          <div class="srow"><div class="slbl">Soil Moisture</div><div><span class="sval" id="sMoist">62</span><span class="sunit">%</span></div></div>
+          <div class="btrack"><div class="bfill" id="bMoist" style="width:62%;background:#81d4fa"></div></div>
+          <div class="srow"><div class="slbl">Air Quality</div><div><span class="sval" id="sAqi">AQI 45</span></div></div>
+          <div class="btrack"><div class="bfill" id="bAqi" style="width:45%;background:#a5d6a7"></div></div>
+          <div class="srow"><div class="slbl">Sunlight</div><div><span class="sval" id="sSun">7.2</span><span class="sunit">klux</span></div></div>
+          <div class="btrack"><div class="bfill" id="bSun" style="width:72%;background:#fff176"></div></div>
+        </div>
+        <div class="health-b">
+          <div class="hdot" id="hDot" style="background:#2e7d32;box-shadow:0 0 0 3px rgba(46,125,50,0.15)"></div>
+          <div><div class="htext" id="hText">Healthy</div><div class="hsub" id="hSub">All vitals normal</div></div>
+        </div>
+        <div class="eco-box">
+          <div class="eco-n" id="ecoNum">240</div>
+          <div class="eco-l">Eco Points</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="panel" id="p-map">
+    <div class="map-wrap">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Bangalore_map.svg/600px-Bangalore_map.svg.png" alt="Bengaluru Map" onerror="this.style.height='200px';this.style.background='var(--surface2)';this.removeAttribute('src')"/>
+    </div>
+    <div class="map-legend">
+      <div class="leg-i"><div class="ldot2" style="background:#2e7d32"></div>Healthy</div>
+      <div class="leg-i"><div class="ldot2" style="background:#e65100"></div>Moderate</div>
+      <div class="leg-i"><div class="ldot2" style="background:#c62828"></div>Stressed</div>
+    </div>
+    <div class="map-stats">
+      <div class="mstat"><div class="mstat-n">9</div><div class="mstat-l">Trees</div></div>
+      <div class="mstat"><div class="mstat-n">3</div><div class="mstat-l">Locations</div></div>
+      <div class="mstat"><div class="mstat-n">189 kg</div><div class="mstat-l">CO&#x2082;/yr</div></div>
+    </div>
+    <div class="sec-lbl" style="margin-top:4px">Location details with crops</div>
+    <div class="loc-card">
+      <div class="lc-h"><div class="lc-ic">&#x1F3EB;</div><div><div class="lc-nm">Izee Business School</div><div class="lc-co">12.7799N, 77.6481E &middot; Jigani</div></div></div>
+      <div class="lc-row"><span class="lc-l">Soil type</span><span class="lc-v">Red laterite soil</span></div>
+      <div class="lc-row"><span class="lc-l">Climate</span><span class="lc-v">Tropical semi-arid</span></div>
+      <div class="lc-row"><span class="lc-l">Rainfall</span><span class="lc-v">900 mm/year</span></div>
+      <div class="lc-tags"><span class="lc-tag">Ragi</span><span class="lc-tag">Coconut</span><span class="lc-tag">Mango</span><span class="lc-tag">Vegetables</span><span class="lc-tag g">Mango Tree</span><span class="lc-tag g">Neem</span><span class="lc-tag g">Peepal</span></div>
+    </div>
+    <div class="loc-card">
+      <div class="lc-h"><div class="lc-ic">&#x1F3ED;</div><div><div class="lc-nm">Jigani Industrial Area</div><div class="lc-co">12.7990N, 77.6650E</div></div></div>
+      <div class="lc-row"><span class="lc-l">Soil type</span><span class="lc-v">Sandy loam</span></div>
+      <div class="lc-row"><span class="lc-l">Climate</span><span class="lc-v">Tropical dry</span></div>
+      <div class="lc-row"><span class="lc-l">Rainfall</span><span class="lc-v">850 mm/year</span></div>
+      <div class="lc-tags"><span class="lc-tag">Silk cotton</span><span class="lc-tag">Tamarind</span><span class="lc-tag">Eucalyptus</span><span class="lc-tag g">Rain Tree</span><span class="lc-tag g">Gulmohar</span><span class="lc-tag g">Banyan</span></div>
+    </div>
+    <div class="loc-card">
+      <div class="lc-h"><div class="lc-ic">&#x1F3EB;</div><div><div class="lc-nm">Christ Academy</div><div class="lc-co">12.8244N, 77.6209E &middot; Begur Koppa Rd</div></div></div>
+      <div class="lc-row"><span class="lc-l">Soil type</span><span class="lc-v">Black cotton soil</span></div>
+      <div class="lc-row"><span class="lc-l">Climate</span><span class="lc-v">Tropical moist</span></div>
+      <div class="lc-row"><span class="lc-l">Rainfall</span><span class="lc-v">970 mm/year</span></div>
+      <div class="lc-tags"><span class="lc-tag">Paddy</span><span class="lc-tag">Sugarcane</span><span class="lc-tag">Banana</span><span class="lc-tag">Betel</span><span class="lc-tag g">Ashoka</span><span class="lc-tag g">Coconut Palm</span><span class="lc-tag g">Indian Oak</span></div>
+    </div>
+  </div>
+
+  <!-- QR SCANNER -->
+  <div class="panel" id="p-qr">
+    <div class="qr-hero"><div class="qr-ht">Scan a Tree QR Code</div><div class="qr-hs">Point your camera at any tree's QR code to see live health data</div></div>
+    <div class="qr-scan"><div class="qr-frame"><div class="qr-scanline"></div></div><div class="qr-hint">Point camera at QR code</div></div>
+    <div class="qr-btns"><button class="qr-btn" onclick="alert('Camera requires HTTPS. Use ngrok URL for mobile scanning!')">Start Camera</button><button class="qr-btn" onclick="showQRResult()">Upload / Paste QR</button></div>
+    <div class="qr-manual">
+      <div class="qr-manual-t">Enter Tree ID manually</div>
+      <div class="qr-inp-row"><input class="qr-inp" id="qrInput" placeholder="e.g. IBS-001..." onkeypress="if(event.key==='Enter')lookupQR()"/><button class="qr-lkup" onclick="lookupQR()">Lookup</button></div>
+      <div class="chips" id="qrChips"></div>
+    </div>
+    <div id="qrResultBox" style="display:none">
+      <div class="qr-result">
+        <div class="qrr-hdr">
+          <img class="qrr-img" id="qrrImg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/120px-Hapus_Mango.jpg" alt=""/>
+          <div>
+            <div class="qrr-name" id="qrrName">Mango Tree</div>
+            <div class="qrr-loc" id="qrrLoc">Izee Business School</div>
+            <div class="qrr-sp" id="qrrSp">Mangifera indica</div>
+          </div>
+          <div class="qrr-status" id="qrrStatus">Healthy</div>
+        </div>
+        <div class="qrr-sensors">
+          <div class="qrr-s"><div class="qrrs-v" id="qrTemp">27&deg;C</div><div class="qrrs-l">Temp</div></div>
+          <div class="qrr-s"><div class="qrrs-v" id="qrMoist">68%</div><div class="qrrs-l">Moisture</div></div>
+          <div class="qrr-s"><div class="qrrs-v" id="qrAqi">AQI 42</div><div class="qrrs-l">Air</div></div>
+          <div class="qrr-s"><div class="qrrs-v" id="qrAge">85 yrs</div><div class="qrrs-l">Age</div></div>
+          <div class="qrr-s"><div class="qrrs-v" id="qrCo2">22 kg</div><div class="qrrs-l">CO&#x2082;/yr</div></div>
+          <div class="qrr-s"><div class="qrrs-v" style="font-size:10px" id="qrId">IBS-001</div><div class="qrrs-l">Tree ID</div></div>
+        </div>
+        <button class="qrr-spk" onclick="speakQR()">Hear this tree speak</button>
+        <div class="lang-sw">
+          <div class="lang-t">Choose Language</div>
+          <div class="lang-grid" id="langGrid"></div>
+        </div>
+        <div class="qr-code-box">
+          <div class="qr-code-t">Tree QR Code — Print &amp; Attach</div>
+          <div class="qr-code-img" id="qrCodeImg"></div>
+          <div class="qr-code-h">Scan to open this tree profile on any phone</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEATHER MOOD -->
+  <div class="panel" id="p-weather">
+    <div class="w-card">
+      <div class="w-main">
+        <div class="w-icon" id="wIcon">&#x26C5;</div>
+        <div><div class="w-city">Bengaluru, Karnataka</div><div class="w-temp"><span id="wTemp">28</span>&deg;C</div><div class="w-cond" id="wCond">Partly Cloudy</div></div>
+      </div>
+      <div class="w-dets">
+        <div class="wdet"><div class="wdet-v" id="wHumid">65%</div><div class="wdet-l">Humidity</div></div>
+        <div class="wdet"><div class="wdet-v" id="wWind">12 km/h</div><div class="wdet-l">Wind</div></div>
+        <div class="wdet"><div class="wdet-v" id="wAqi">AQI 48</div><div class="wdet-l">Air Quality</div></div>
+      </div>
+    </div>
+    <button class="mood-all-btn" onclick="speakAllMoods()">Hear All Trees in This Weather</button>
+    <div class="sec-lbl">How the trees feel today</div>
+    <div id="moodCards"></div>
+  </div>
+
+  <!-- CARBON CALCULATOR -->
+  <div class="panel" id="p-carbon">
+    <div class="carbon-hero">
+      <div class="carbon-big" id="cTrees">12 Trees</div>
+      <div class="carbon-sub">needed to offset your annual carbon footprint</div>
+      <div class="carbon-lbl" id="cTotal">Total: 2,400 kg CO&#x2082;/year</div>
+    </div>
+    <div class="calc-grid">
+      <div class="calc-item"><div class="calc-l">Km driven / week</div><div class="calc-v" id="cvCar">100 km</div><input type="range" class="cslider" min="0" max="500" value="100" step="10" id="slCar" oninput="updateCarbon()"/></div>
+      <div class="calc-item"><div class="calc-l">Flights per year</div><div class="calc-v" id="cvFly">2 flights</div><input type="range" class="cslider" min="0" max="20" value="2" step="1" id="slFly" oninput="updateCarbon()"/></div>
+      <div class="calc-item"><div class="calc-l">Meat meals / week</div><div class="calc-v" id="cvMeat">4 meals</div><input type="range" class="cslider" min="0" max="21" value="4" step="1" id="slMeat" oninput="updateCarbon()"/></div>
+      <div class="calc-item"><div class="calc-l">Home energy (kWh/mo)</div><div class="calc-v" id="cvHome">200 kWh</div><input type="range" class="cslider" min="0" max="1000" value="200" step="10" id="slHome" oninput="updateCarbon()"/></div>
+    </div>
+    <div class="breakdown">
+      <div class="brow"><div class="brow-l">Transport</div><div class="bbar-t"><div class="bbar-f" id="bbCar" style="width:40%"></div></div><div class="brow-v" id="bvCar">520 kg</div></div>
+      <div class="brow"><div class="brow-l">Flights</div><div class="bbar-t"><div class="bbar-f" id="bbFly" style="width:30%;background:#ef9a9a"></div></div><div class="brow-v" id="bvFly">600 kg</div></div>
+      <div class="brow"><div class="brow-l">Diet</div><div class="bbar-t"><div class="bbar-f" id="bbMeat" style="width:20%;background:#ffb74d"></div></div><div class="brow-v" id="bvMeat">832 kg</div></div>
+      <div class="brow"><div class="brow-l">Home energy</div><div class="bbar-t"><div class="bbar-f" id="bbHome" style="width:15%;background:#81d4fa"></div></div><div class="brow-v" id="bvHome">480 kg</div></div>
+    </div>
+    <button class="offset-btn" onclick="alert('Tree planting plan generated for Bengaluru zone!')">Get My Tree Planting Plan</button>
+  </div>
+
+  <!-- COMMUNITY -->
+  <div class="panel" id="p-community">
+    <div class="rep-form">
+      <label class="f-lbl">Select Tree</label>
+      <select class="f-sel" id="rTree">
+        <option>Mango Tree — Izee Business School (IBS-001)</option>
+        <option>Neem Tree — Izee Business School (IBS-002)</option>
+        <option>Rain Tree — Jigani Industrial Area (JIG-001)</option>
+        <option>Ashoka Tree — Christ Academy (CAC-001)</option>
+        <option>Coconut Palm — Christ Academy (CAC-002)</option>
+      </select>
+      <label class="f-lbl">Issue Type</label>
+      <select class="f-sel" id="rIssue">
+        <option>Leaves yellowing / disease</option>
+        <option>Broken branch</option>
+        <option>Pest infestation</option>
+        <option>Construction damage</option>
+        <option>Needs watering</option>
+        <option>Vandalism / littering</option>
+      </select>
+      <label class="f-lbl">Severity</label>
+      <div class="sev-row">
+        <button class="sev-btn low" onclick="setSev(this,'low')">Low</button>
+        <button class="sev-btn" onclick="setSev(this,'med')">Medium</button>
+        <button class="sev-btn" onclick="setSev(this,'hi')">High</button>
+      </div>
+      <label class="f-lbl">Description</label>
+      <textarea class="f-ta" id="rDesc" placeholder="Describe what you observed..."></textarea>
+      <button class="sub-btn" onclick="submitReport()">Submit Report</button>
+    </div>
+    <div class="sec-lbl">Recent Reports</div>
+    <div id="reportFeed">
+      <div class="rep-item"><div style="font-size:14px;flex-shrink:0;margin-top:2px">&#x1F342;</div><div><div class="ri-t">Yellowing leaves on Peepal</div><div class="ri-m">MG Road &middot; 2 hours ago</div><span class="ri-s rs-open">Open</span></div></div>
+      <div class="rep-item"><div style="font-size:14px;flex-shrink:0;margin-top:2px">&#x1FAB5;</div><div><div class="ri-t">Broken branch after storm</div><div class="ri-m">Cubbon Park &middot; Yesterday</div><span class="ri-s rs-rev">Under Review</span></div></div>
+      <div class="rep-item"><div style="font-size:14px;flex-shrink:0;margin-top:2px">&#x1F4A7;</div><div><div class="ri-t">Needs urgent watering</div><div class="ri-m">Lalbagh &middot; 3 days ago</div><span class="ri-s rs-done">Resolved</span></div></div>
+    </div>
+  </div>
+
+  <!-- LEAF AI -->
+  <div class="panel" id="p-leaf">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">Leaf Disease Diagnosis</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Upload a leaf photo — AI diagnoses health, disease and care tips</div>
+    <div class="upload-area" onclick="showLeafResult('healthy')">
+      <div class="up-ic">&#x1F343;</div>
+      <div class="up-t">Upload a Leaf Photo</div>
+      <div class="up-s">Tap to upload or take a photo</div>
+    </div>
+    <div class="sec-lbl">Or try a demo sample</div>
+    <div class="samples">
+      <div class="samp" onclick="showLeafResult('healthy')"><div class="samp-ic">&#x1F331;</div><div class="samp-l">Healthy</div></div>
+      <div class="samp" onclick="showLeafResult('yellow')"><div class="samp-ic">&#x1F342;</div><div class="samp-l">Yellowing</div></div>
+      <div class="samp" onclick="showLeafResult('pest')"><div class="samp-ic">&#x1F41B;</div><div class="samp-l">Pest</div></div>
+      <div class="samp" onclick="showLeafResult('fungal')"><div class="samp-ic">&#x1F344;</div><div class="samp-l">Fungal</div></div>
+    </div>
+    <div class="ai-result" id="leafResult">
+      <div class="air-t"><span id="leafIcon"></span><span id="leafTitle">Analysis Result</span></div>
+      <div class="air-b" id="leafBody"></div>
+      <div class="conf-row"><div class="conf-l">Confidence</div><div class="conf-bar"><div class="conf-fill" id="confFill"></div></div><span style="font-size:10px;color:var(--text3);margin-left:5px" id="confPct"></span></div>
+      <div class="care-t">Care Tips</div>
+      <div id="careTips"></div>
+    </div>
+  </div>
+
+  <!-- TREE IDENTIFIER -->
+  <div class="panel" id="p-treeid">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">Tree Identifier</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Upload or take a photo of any tree — AI identifies the species and gives full details</div>
+    <div class="ti-up" onclick="showTreeIDResult()">
+      <div class="up-ic">&#x1F333;</div>
+      <div class="up-t">Upload or Take a Photo</div>
+      <div class="up-s">Supports any tree from anywhere in the world</div>
+    </div>
+    <div class="ti-btns">
+      <button class="ti-btn" onclick="showTreeIDResult()">Upload from Gallery</button>
+      <button class="ti-btn" onclick="showTreeIDResult()">Take Live Photo</button>
+    </div>
+    <div class="ti-result" id="tiResult" style="display:none">
+      <div class="tir-hdr">
+        <div class="tir-em" id="tiEmoji">&#x1FAD5;</div>
+        <div>
+          <div class="tir-name" id="tiName">Mango Tree</div>
+          <div class="tir-lat" id="tiLat">Mangifera indica</div>
+          <div class="tir-orig" id="tiOrig">Origin: India, South Asia</div>
+        </div>
+        <div class="tir-conf" id="tiConf">94%</div>
+      </div>
+      <div class="ti-tabs">
+        <button class="ti-tab act" onclick="switchTITab('overview',this)">Overview</button>
+        <button class="ti-tab" onclick="switchTITab('medicinal',this)">Medicinal</button>
+        <button class="ti-tab" onclick="switchTITab('climate',this)">Climate</button>
+        <button class="ti-tab" onclick="switchTITab('uses',this)">Uses</button>
+        <button class="ti-tab" onclick="switchTITab('facts',this)">Facts</button>
+      </div>
+      <div class="ti-content" id="tiContent">The Mango tree is one of the most cultivated fruits in the tropics and subtropics. It can grow up to 40 meters tall and live for over 300 years. India produces 40% of the world's mangoes. The tree absorbs approximately 22 kg of CO&#x2082; per year and provides shade, reducing urban heat island effect.</div>
+      <button class="ti-spk" onclick="speakTreeID()">Hear Full Details</button>
+    </div>
+  </div>
+
+  <!-- WORLD TREES -->
+  <div class="panel" id="p-world">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px">World Trees Encyclopedia</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Explore 25 trees from 6 continents</div>
+    <input class="wt-search" placeholder="Search by name, country, climate..." oninput="filterWT(this.value)"/>
+    <div class="wt-filters" id="wtFilters"></div>
+    <div class="wt-grid" id="wtGrid"></div>
+    <!-- MODAL -->
+    <div class="wt-modal-wrap" id="wtModal">
+      <div class="wt-modal">
+        <img class="wtm-img" id="wtmImg" src="" alt=""/>
+        <div class="wtm-name" id="wtmName"></div>
+        <div class="wtm-lat" id="wtmLat"></div>
+        <div class="wtm-grid" id="wtmGrid"></div>
+        <div class="wtm-sec"><div class="wtm-sl">Uses</div><div class="wtm-st" id="wtmUses"></div></div>
+        <div class="wtm-sec"><div class="wtm-sl">Medicinal</div><div class="wtm-st" id="wtmMed"></div></div>
+        <div class="wtm-sec" style="border-left-color:var(--amber)"><div class="wtm-sl">Fun Fact</div><div class="wtm-st" id="wtmFact"></div></div>
+        <button class="wtm-spk" onclick="speakWT()">Hear About This Tree</button>
+        <button class="wtm-close" onclick="closeWT()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="panel" id="p-lb">
+    <div class="lb-hdr"><div class="lb-t">Eco Champions</div><div class="lb-s">Schools &amp; communities protecting Bengaluru's trees</div></div>
+    <div class="lb-tabs-r">
+      <button class="lb-tab act" onclick="switchLB('schools',this)">Schools</button>
+      <button class="lb-tab" onclick="switchLB('users',this)">Users</button>
+      <button class="lb-tab" onclick="switchLB('zones',this)">Zones</button>
+    </div>
+    <div id="lbList"></div>
+    <div class="lb-my">
+      <div class="lbm-l">Your Score</div>
+      <div class="lbm-pts" id="lbMyPts">240 pts</div>
+      <div class="lbm-r">Rank #12 &middot; Keep going!</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bot-nav">
+    <button class="bn act" id="bn-talk" onclick="goTab('talk',this)"><div class="bn-ic">&#x1F333;</div><div class="bn-lb">Trees</div></button>
+    <button class="bn" id="bn-map" onclick="goTab('map',this)"><div class="bn-ic">&#x1F5FA;&#xFE0F;</div><div class="bn-lb">Map</div></button>
+    <button class="bn" id="bn-qr" onclick="goTab('qr',this)"><div class="bn-ic">&#x1F4F1;</div><div class="bn-lb">QR</div></button>
+    <button class="bn" id="bn-carbon" onclick="goTab('carbon',this)"><div class="bn-ic">&#x1F9EE;</div><div class="bn-lb">Carbon</div></button>
+    <button class="bn" id="bn-lb" onclick="goTab('lb',this)"><div class="bn-ic">&#x1F3C6;</div><div class="bn-lb">Ranks</div></button>
+  </div>
+
+</div><!-- .app -->
+
+<script>
+// ── TAB CONFIG ──
+const TAB_META = {
+  talk:      {ic:'&#x1F333;',t:'Tree Talk',s:'AI-powered chat'},
+  map:       {ic:'&#x1F5FA;&#xFE0F;',t:'City Map',s:'3 real GPS locations'},
+  qr:        {ic:'&#x1F4F1;',t:'QR Scanner',s:'Scan any tree QR code'},
+  weather:   {ic:'&#x1F326;&#xFE0F;',t:'Weather Mood',s:'Live weather reaction'},
+  carbon:    {ic:'&#x1F9EE;',t:'Carbon Calculator',s:'Your CO\u2082 footprint'},
+  community: {ic:'&#x1F4E2;',t:'Community Reports',s:'Report tree issues'},
+  leaf:      {ic:'&#x1F343;',t:'Leaf Diagnosis',s:'AI disease detection'},
+  treeid:    {ic:'&#x1F4F8;',t:'Tree Identifier',s:'Identify any tree by photo'},
+  world:     {ic:'&#x1F30D;',t:'World Trees',s:'Global encyclopedia'},
+  lb:        {ic:'&#x1F3C6;',t:'Leaderboard',s:'Eco champions ranking'},
+};
+const PANEL_MAP = {talk:'p-talk',map:'p-map',qr:'p-qr',weather:'p-weather',carbon:'p-carbon',community:'p-community',leaf:'p-leaf',treeid:'p-treeid',world:'p-world',lb:'p-lb'};
+const BN_MAP = {talk:'bn-talk',map:'bn-map',qr:'bn-qr',carbon:'bn-carbon',lb:'bn-lb'};
+let curTab = 'talk';
+let natPlaying = false;
+let speakUtt = null;
+let ecoPoints = 240;
+
+function goTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const p = document.getElementById(PANEL_MAP[id]); if(p) p.classList.add('active');
+  document.querySelectorAll('.di').forEach(b=>b.classList.remove('act'));
+  const di = document.getElementById('di-'+id); if(di) di.classList.add('act');
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('act'));
+  const bn = document.getElementById(BN_MAP[id]); if(bn) bn.classList.add('act');
+  const m = TAB_META[id]||{};
+  document.getElementById('thIc').innerHTML = m.ic||'';
+  document.getElementById('thTitle').textContent = m.t||'';
+  document.getElementById('thSub').textContent = m.s||'';
+  curTab = id; closeDr();
+  if(id==='weather') loadWeather();
+  if(id==='lb') buildLB('schools');
+  if(id==='world') buildWT();
+  if(id==='qr') { buildChips(); buildLangGrid(); }
+}
+
+// ── DRAWER ──
+function toggleDr() {
+  const d=document.getElementById('drawer'),o=document.getElementById('dov'),h=document.getElementById('hbtn');
+  const open=!d.classList.contains('open');
+  d.classList.toggle('open',open); o.classList.toggle('open',open); h.classList.toggle('open',open);
+}
+function closeDr() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('dov').classList.remove('open');
+  document.getElementById('hbtn').classList.remove('open');
+}
+
+// ── THEME ──
+function toggleTheme() {
+  const html=document.documentElement, dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').innerHTML=dark?'&#9788;':'&#9790;';
+  try{localStorage.setItem('tt-theme',dark?'light':'dark')}catch(e){}
+}
+(function(){
+  try{const s=localStorage.getItem('tt-theme');if(s){document.documentElement.setAttribute('data-theme',s);if(s==='dark')document.getElementById('themeBtn').innerHTML='&#9790;';}}catch(e){}
+})();
+
+// ── NATURE SOUNDS (Web Audio API) ──
+let natCtx=null, natGain=null, natNodes=[];
+function toggleNature(){
+  if(natPlaying){stopNature();return;}
+  try{
+    natCtx=new(window.AudioContext||window.webkitAudioContext)();
+    natGain=natCtx.createGain(); natGain.gain.value=0; natGain.connect(natCtx.destination);
+    // Wind
+    const wBuf=natCtx.createBuffer(1,natCtx.sampleRate*3,natCtx.sampleRate);
+    const wd=wBuf.getChannelData(0); for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
+    const wSrc=natCtx.createBufferSource(); wSrc.buffer=wBuf; wSrc.loop=true;
+    const wFil=natCtx.createBiquadFilter(); wFil.type='lowpass'; wFil.frequency.value=400;
+    const wGain=natCtx.createGain(); wGain.gain.value=0.18;
+    wSrc.connect(wFil); wFil.connect(wGain); wGain.connect(natGain); wSrc.start();
+    natNodes=[wSrc,wFil,wGain];
+    // Birds
+    function chirp(){
+      if(!natPlaying)return;
+      const o=natCtx.createOscillator(),g=natCtx.createGain(),f=2400+Math.random()*1200;
+      o.type='sine'; o.frequency.setValueAtTime(f,natCtx.currentTime);
+      o.frequency.linearRampToValueAtTime(f*1.15,natCtx.currentTime+0.1);
+      g.gain.setValueAtTime(0.15+Math.random()*0.1,natCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,natCtx.currentTime+0.15);
+      o.connect(g); g.connect(natGain); o.start(); o.stop(natCtx.currentTime+0.18);
+      setTimeout(chirp,1800+Math.random()*4000);
+    }
+    setTimeout(chirp,800);
+    natGain.gain.linearRampToValueAtTime(0.6,natCtx.currentTime+2);
+    natPlaying=true;
+    document.getElementById('natBtn').classList.add('on');
+    document.getElementById('natBtn').textContent='■ Nature';
+  }catch(e){alert('Web Audio not supported in this browser.');}
+}
+function stopNature(){
+  if(natGain)natGain.gain.linearRampToValueAtTime(0,natCtx.currentTime+1);
+  setTimeout(()=>{natNodes.forEach(n=>{try{if(n.stop)n.stop();n.disconnect();}catch(e){}});natNodes=[];if(natCtx){natCtx.close();natCtx=null;natGain=null;}},1100);
+  natPlaying=false;
+  document.getElementById('natBtn').classList.remove('on');
+  document.getElementById('natBtn').textContent='&#x1F343; Nature';
+}
+
+// ── SPEECH ──
+function stopVoice(){window.speechSynthesis&&window.speechSynthesis.cancel();speakUtt=null;}
+function speak(text,opts={}){
+  if(!window.speechSynthesis)return;
+  stopVoice();
+  const u=new SpeechSynthesisUtterance(text.replace(/[#*]/g,''));
+  u.rate=opts.rate||0.88; u.pitch=opts.pitch||0.85; u.lang=opts.lang||'en-US';
+  const vs=window.speechSynthesis.getVoices();
+  const pv=vs.find(v=>v.lang.startsWith((opts.lang||'en').split('-')[0]))||vs.find(v=>v.lang.startsWith('en'))||vs[0];
+  if(pv)u.voice=pv;
+  if(natPlaying&&natGain)natGain.gain.linearRampToValueAtTime(0.2,natCtx.currentTime+0.5);
+  u.onend=()=>{speakUtt=null;if(natPlaying&&natGain)natGain.gain.linearRampToValueAtTime(0.6,natCtx.currentTime+0.5);if(opts.onend)opts.onend();};
+  u.onerror=()=>{speakUtt=null;if(opts.onend)opts.onend();};
+  speakUtt=u; window.speechSynthesis.speak(u);
+}
+
+// ── TREES ──
+const TREES=[
+  {id:'IBS-001',name:'Mango Tree',lat:'Mangifera indica',age:'85 yrs',co2:'22 kg/yr',loc:'Izee Business School',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/200px-Hapus_Mango.jpg',greeting:"Namaste! I am the Mango Tree of Izee Business School. I have stood on this campus for 85 years, watching students come and go. My roots run deep into this Bengaluru soil. I absorb 22 kilograms of CO2 every year. Ask me anything!",responses:{health:"My soil moisture is 62% and air quality is AQI 45 — I am in excellent health today! My canopy is working hard to cool the campus.",carbon:"I absorb 22 kilograms of CO2 every year. Together with all 9 trees in our network, we absorb 189 kilograms annually for this community!",age:"I have been growing here for 85 years — planted before Indian independence! I have sheltered countless students under my shade.",code:"My unique tree ID is IBS-001. You can scan my QR code on the QR Scanner tab to access all my real-time sensor data!",default:"I am the heart of Izee Business School campus! Ask me about my health, carbon absorption, age, or tree ID code."}},
+  {id:'WF-012',name:'Coconut Palm',lat:'Cocos nucifera',age:'32 yrs',co2:'15 kg/yr',loc:'Bangalore Waterfront',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconut_palm_at_Kovalam.jpg/200px-Coconut_palm_at_Kovalam.jpg',greeting:"Hello! I am the Coconut Palm. Every part of me is useful — from my fruit to my leaves to my trunk. I am truly the tree of life! Ask me anything.",responses:{health:"I am thriving! Sunlight is excellent and moisture balanced. I produce coconuts every month nourishing wildlife and people!",carbon:"I absorb 15 kilograms of carbon per year. My real superpower is transpiration — I naturally air-condition my surroundings!",age:"I am 32 years old — still young and productive! I expect to live over 100 years.",default:"Ask me about my health, carbon absorption, or age! I am a tropical treasure."}},
+  {id:'MG-023',name:'Ashoka Tree',lat:'Saraca asoca',age:'70 yrs',co2:'19 kg/yr',loc:'MG Road',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Saraca_asoca_flowers.jpg/200px-Saraca_asoca_flowers.jpg',greeting:"Peace be upon you. I am the Ashoka — tree of sacred groves and ancient temples. My crimson flowers bloom in February, painting the city red. In your fast cities, I offer stillness.",responses:{health:"My vitals are strong today. Temperature comfortable, moisture balanced. I am at peace.",carbon:"I absorb 19 kilograms of carbon each year and reduce the heat island effect by 2 degrees Celsius around me!",age:"I am 70 years old — a symbol of peace for this city. My roots hold the memories of generations.",default:"Ask me about health, heritage, or carbon! I am a symbol of peace."}},
+  {id:'LB-007',name:'Indian Oak',lat:'Barringtonia acutangula',age:'55 yrs',co2:'18 kg/yr',loc:'Lalbagh',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Barringtonia_acutangula_flowers.jpg/200px-Barringtonia_acutangula_flowers.jpg',greeting:"Greetings. I am the Indian Oak, guardian of the water body at Lalbagh. My flowers bloom at night, attracting bats and moths. Without them, forests cannot survive!",responses:{health:"Air quality is AQI 67 today — so I am working hard to filter particulates through my broad canopy.",carbon:"I store 18 kilograms of carbon annually and support 40+ species of birds and insects. Biodiversity is my superpower!",age:"I am 55 years old, standing quietly by the water body, watching the ecosystem thrive around me.",default:"Ask me about biodiversity, health, or carbon!"}},
+];
+let curTree=0;
+function buildTreeTabs(){
+  const c=document.getElementById('treeTabs');
+  TREES.forEach((t,i)=>{
+    const btn=document.createElement('button'); btn.className='ttab'+(i===0?' act':'');
+    const img=document.createElement('img'); img.src=t.img; img.alt=t.name; img.onerror=()=>img.remove();
+    btn.appendChild(img); btn.appendChild(document.createTextNode(t.name));
+    btn.onclick=()=>selectTree(i,btn); c.appendChild(btn);
+  });
+}
+function selectTree(i,btn){
+  curTree=i; const t=TREES[i];
+  document.querySelectorAll('.ttab').forEach(b=>b.classList.remove('act')); btn.classList.add('act');
+  document.getElementById('treePhoto').src=t.img;
+  document.getElementById('treeName').textContent=t.name;
+  document.getElementById('treeLat').textContent=t.lat;
+  document.getElementById('treeAge').textContent='Est. '+t.age+' · '+t.co2;
+  document.getElementById('vbarTxt').textContent=t.name+' is speaking...';
+  document.getElementById('chatArea').innerHTML='';
+  addTreeMsg(t.greeting);
+  addEco(20); randomSensors();
+}
+function addTreeMsg(text,autoSpeak=true){
+  const area=document.getElementById('chatArea');
+  const msg=document.createElement('div'); msg.className='msg';
+  const av=document.createElement('div'); av.className='av';
+  const img=document.createElement('img'); img.src=TREES[curTree].img; img.alt=''; av.appendChild(img);
+  const bub=document.createElement('div'); bub.className='bub';
+  const spkBtn=document.createElement('button'); spkBtn.className='spk-b'; spkBtn.innerHTML='&#x1F50A;';
+  spkBtn.onclick=()=>speak(text,{rate:0.88,pitch:0.82});
+  bub.appendChild(spkBtn);
+  const tn=document.createTextNode(''); bub.insertBefore(tn,spkBtn);
+  msg.appendChild(av); msg.appendChild(bub); area.appendChild(msg); area.scrollTop=area.scrollHeight;
+  let idx=0; const ti=setInterval(()=>{tn.nodeValue=text.slice(0,idx++);area.scrollTop=area.scrollHeight;if(idx>text.length){clearInterval(ti);if(autoSpeak)speak(text,{rate:0.88,pitch:0.82});}},16);
+}
+function sendMsg(){
+  const inp=document.getElementById('chatInput'); const v=inp.value.trim(); if(!v)return; inp.value='';
+  const area=document.getElementById('chatArea');
+  const msg=document.createElement('div'); msg.className='msg';
+  const av=document.createElement('div'); av.className='av'; av.innerHTML='&#x1F9D1;';
+  const bub=document.createElement('div'); bub.className='bub u'; bub.textContent=v;
+  msg.appendChild(av); msg.appendChild(bub); area.appendChild(msg); area.scrollTop=area.scrollHeight;
+  addEco(10);
+  const t=TREES[curTree]; const low=v.toLowerCase();
+  let r=t.responses.default;
+  for(const k of Object.keys(t.responses)){if(low.includes(k)){r=t.responses[k];break;}}
+  setTimeout(()=>addTreeMsg(r),600);
+}
+function addEco(pts){
+  ecoPoints+=pts;
+  document.getElementById('ecoNum').textContent=ecoPoints;
+  const lm=document.getElementById('lbMyPts'); if(lm)lm.textContent=ecoPoints+' pts';
+}
+
+// ── SENSORS ──
+function randomSensors(){
+  const temp=Math.round(24+Math.random()*12),moist=Math.round(30+Math.random()*55),aqi=Math.round(20+Math.random()*80),sun=parseFloat((3+Math.random()*8).toFixed(1));
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  const b=(id,w,bg)=>{const e=document.getElementById(id);if(e){e.style.width=w+'%';if(bg)e.style.background=bg}};
+  s('sTemp',temp); s('sMoist',moist); s('sAqi','AQI '+aqi); s('sSun',sun);
+  b('bTemp',Math.min((temp/45)*100,100),'#ef9a9a'); b('bMoist',moist,'#81d4fa'); b('bAqi',Math.min(aqi,100),'#a5d6a7'); b('bSun',Math.min((sun/12)*100,100),'#fff176');
+  const dot=document.getElementById('hDot'),ht=document.getElementById('hText'),hs=document.getElementById('hSub');
+  if(moist<35){dot.style.background='#c62828';dot.style.boxShadow='0 0 0 3px rgba(198,40,40,0.15)';ht.textContent='Stressed';hs.textContent='Low moisture';}
+  else if(aqi>70||temp>34){dot.style.background='#e65100';dot.style.boxShadow='0 0 0 3px rgba(230,81,0,0.15)';ht.textContent='Moderate';hs.textContent='Monitor conditions';}
+  else{dot.style.background='#2e7d32';dot.style.boxShadow='0 0 0 3px rgba(46,125,50,0.15)';ht.textContent='Healthy';hs.textContent='All vitals normal';}
+}
+setInterval(randomSensors,5000);
+
+// ── QR SCANNER ──
+const QR_DATA={
+  'IBS-001':{name:'Mango Tree',loc:'Izee Business School',sp:'Mangifera indica',temp:'27°C',moist:'68%',aqi:'AQI 42',age:'85 yrs',co2:'22 kg',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/120px-Hapus_Mango.jpg',health:'Healthy',color:'#e8f5e9',tc:'#1b5e20'},
+  'IBS-002':{name:'Neem Tree',loc:'Izee Business School',sp:'Azadirachta indica',temp:'28°C',moist:'61%',aqi:'AQI 38',age:'40 yrs',co2:'17 kg',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Neem_leaves.jpg/120px-Neem_leaves.jpg',health:'Healthy',color:'#e8f5e9',tc:'#1b5e20'},
+  'JIG-001':{name:'Rain Tree',loc:'Jigani Industrial Area',sp:'Samanea saman',temp:'30°C',moist:'48%',aqi:'AQI 62',age:'35 yrs',co2:'25 kg',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Samanea_saman_in_Kerala.jpg/120px-Samanea_saman_in_Kerala.jpg',health:'Moderate',color:'#fff8e1',tc:'#e65100'},
+  'CAC-001':{name:'Ashoka Tree',loc:'Christ Academy',sp:'Saraca asoca',temp:'27°C',moist:'70%',aqi:'AQI 40',age:'50 yrs',co2:'19 kg',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Saraca_asoca_flowers.jpg/120px-Saraca_asoca_flowers.jpg',health:'Healthy',color:'#e8f5e9',tc:'#1b5e20'},
+  'CAC-002':{name:'Coconut Palm',loc:'Christ Academy',sp:'Cocos nucifera',temp:'29°C',moist:'55%',aqi:'AQI 44',age:'32 yrs',co2:'15 kg',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconut_palm_at_Kovalam.jpg/120px-Coconut_palm_at_Kovalam.jpg',health:'Healthy',color:'#e8f5e9',tc:'#1b5e20'},
+};
+function buildChips(){
+  const c=document.getElementById('qrChips'); if(!c||c.children.length)return;
+  Object.keys(QR_DATA).forEach(id=>{
+    const ch=document.createElement('span'); ch.className='chip'; ch.textContent=id;
+    ch.onclick=()=>{document.getElementById('qrInput').value=id;lookupQR();ch.classList.toggle('sel');};
+    c.appendChild(ch);
+  });
+}
+function lookupQR(){
+  const id=document.getElementById('qrInput').value.trim().toUpperCase();
+  const d=QR_DATA[id];
+  if(!d){alert('Tree ID not found. Try: IBS-001, JIG-001 or CAC-001');return;}
+  showQRResult(id,d);
+}
+function showQRResult(id,d){
+  if(!id){id='IBS-001';d=QR_DATA[id];}
+  document.getElementById('qrrImg').src=d.img;
+  document.getElementById('qrrName').textContent=d.name;
+  document.getElementById('qrrLoc').textContent='📍 '+d.loc;
+  document.getElementById('qrrSp').textContent=d.sp;
+  document.getElementById('qrTemp').textContent=d.temp;
+  document.getElementById('qrMoist').textContent=d.moist;
+  document.getElementById('qrAqi').textContent=d.aqi;
+  document.getElementById('qrAge').textContent=d.age;
+  document.getElementById('qrCo2').textContent=d.co2;
+  document.getElementById('qrId').textContent=id;
+  const st=document.getElementById('qrrStatus'); st.textContent=d.health; st.style.background=d.color; st.style.color=d.tc; st.style.border='1px solid '+d.tc+'55';
+  generateQRCode(id); document.getElementById('qrResultBox').style.display='block';
+  document.getElementById('qrResultBox').scrollIntoView({behavior:'smooth',block:'nearest'});
+  addEco(20);
+  setTimeout(()=>speak(`Hello! I am the ${d.name} at ${d.loc}. My tree ID is ${id}. I am currently ${d.health}. Temperature around me is ${d.temp}. Soil moisture is ${d.moist}. I absorb ${d.co2} of carbon dioxide every year. Thank you for scanning me!`),500);
+}
+function speakQR(){
+  const id=document.getElementById('qrId').textContent;
+  const d=QR_DATA[id]||QR_DATA['IBS-001'];
+  speak(`Hello! I am the ${d.name} at ${d.loc}. Scientific name ${d.sp}. I am ${d.age} old and currently ${d.health}. Temperature: ${d.temp}. Soil moisture: ${d.moist}. Air quality: ${d.aqi}. I absorb ${d.co2} of carbon dioxide every year. My ID is ${id}. Thank you for scanning!`,{rate:0.88,pitch:0.82});
+}
+function generateQRCode(treeId){
+  const SERVER_IP='10.182.189.80',PORT='3000';
+  const url=`http://${SERVER_IP}:${PORT}/?tree=${treeId}`;
+  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(url)}&color=1b5e20&bgcolor=ffffff&margin=6`;
+  const c=document.getElementById('qrCodeImg');
+  c.innerHTML=`<img src="${qrUrl}" width="110" height="110" style="border-radius:6px;display:block" onerror="this.parentElement.innerHTML='<div style=width:110px;height:110px;background:#e8f5e9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#2e7d32;text-align:center;padding:8px>${treeId}</div>'"/><div style="font-size:9px;color:#2e7d32;font-family:monospace;text-align:center;margin-top:4px">${treeId}</div>`;
+}
+const LANGS=[
+  {code:'en',n:'English',f:'🇬🇧',lc:'en-US',r:0.88,p:0.85},
+  {code:'hi',n:'Hindi',f:'🇮🇳',lc:'hi-IN',r:0.82,p:0.9},
+  {code:'kn',n:'Kannada',f:'🇮🇳',lc:'kn-IN',r:0.80,p:0.9},
+  {code:'ta',n:'Tamil',f:'🇮🇳',lc:'ta-IN',r:0.80,p:0.9},
+  {code:'te',n:'Telugu',f:'🇮🇳',lc:'te-IN',r:0.82,p:0.9},
+  {code:'mr',n:'Marathi',f:'🇮🇳',lc:'mr-IN',r:0.82,p:0.9},
+  {code:'fr',n:'French',f:'🇫🇷',lc:'fr-FR',r:0.88,p:0.9},
+  {code:'es',n:'Spanish',f:'🇪🇸',lc:'es-ES',r:0.9,p:0.95},
+  {code:'de',n:'German',f:'🇩🇪',lc:'de-DE',r:0.88,p:0.9},
+  {code:'ja',n:'Japanese',f:'🇯🇵',lc:'ja-JP',r:0.85,p:0.9},
+];
+const LANG_GREETINGS={
+  hi:(d)=>`नमस्ते! मैं ${d.name} हूँ, ${d.loc} में। मेरी आयु ${d.age} है। मैं हर साल ${d.co2} कार्बन अवशोषित करता हूँ।`,
+  kn:(d)=>`ನಮಸ್ಕಾರ! ನಾನು ${d.name}, ${d.loc} ನಲ್ಲಿ ಇದ್ದೇನೆ. ನನ್ನ ವಯಸ್ಸು ${d.age}. ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ!`,
+  ta:(d)=>`வணக்கம்! நான் ${d.name}, ${d.loc} இல். என் வயது ${d.age}. ஸ்கேன் செய்ததற்கு நன்றி!`,
+  te:(d)=>`నమస్కారం! నేను ${d.name}, ${d.loc} లో. నా వయసు ${d.age}. స్కాన్ చేసినందుకు ధన్యవాదాలు!`,
+};
+function buildLangGrid(){
+  const g=document.getElementById('langGrid'); if(!g||g.children.length)return;
+  LANGS.forEach((l,i)=>{
+    const btn=document.createElement('button'); btn.className='langbtn'+(i===0?' act':'');
+    btn.innerHTML=`<span style="font-size:13px">${l.f}</span>${l.n}`;
+    btn.onclick=()=>{
+      document.querySelectorAll('.langbtn').forEach(b=>b.classList.remove('act')); btn.classList.add('act');
+      const id=document.getElementById('qrId').textContent; const d=QR_DATA[id]||QR_DATA['IBS-001'];
+      const gtFn=LANG_GREETINGS[l.code];
+      const txt=gtFn?gtFn(d):`Hello! I am the ${d.name} at ${d.loc}. I am ${d.age} old. I absorb ${d.co2} of carbon dioxide every year. Thank you for scanning me!`;
+      speak(txt,{rate:l.r,pitch:l.p,lang:l.lc});
+    }; g.appendChild(btn);
+  });
+}
+
+// ── WEATHER ──
+const WEATHER_CONDS=[
+  {icon:'☀️',temp:30,cond:'Sunny & Clear',humid:'55%',wind:'8 km/h',aqi:'AQI 42',type:'sunny'},
+  {icon:'⛅',temp:27,cond:'Partly Cloudy',humid:'68%',wind:'14 km/h',aqi:'AQI 51',type:'mild'},
+  {icon:'🌧️',temp:24,cond:'Light Rain',humid:'85%',wind:'18 km/h',aqi:'AQI 35',type:'rainy'},
+  {icon:'🌤️',temp:28,cond:'Mostly Sunny',humid:'62%',wind:'10 km/h',aqi:'AQI 46',type:'mild'},
+];
+const MOOD_MSGS={
+  sunny:[
+    {em:'🥭',n:'Mango Tree',msg:"The sun blazes today! I am working overtime to cool the air. Please water me soon.",r:0.82,p:0.72},
+    {em:'🌴',n:'Coconut Palm',msg:"Glorious sunshine! My fronds are soaking every ray. I feel absolutely radiant!",r:0.95,p:1.05},
+    {em:'🌲',n:'Ashoka Tree',msg:"This heat is intense. My roots are drawing deep water to cool the street.",r:0.80,p:0.75},
+    {em:'🎋',n:'Indian Oak',msg:"Warm days boost my photosynthesis. I am absorbing carbon at full speed!",r:0.90,p:0.88},
+  ],
+  rainy:[
+    {em:'🥭',n:'Mango Tree',msg:"Rain! Oh glorious rain! My roots are drinking deeply. Best day ever!",r:1.05,p:1.1},
+    {em:'🌴',n:'Coconut Palm',msg:"Rain cleanses my fronds. Though too much water worries me a little!",r:0.90,p:0.95},
+    {em:'🌲',n:'Ashoka Tree',msg:"Rain washes the city dust away. Now I can photosynthesize at full capacity!",r:0.92,p:1.0},
+    {em:'🎋',n:'Indian Oak',msg:"Rainfall replenishes my water body. The frogs have returned tonight!",r:0.88,p:0.85},
+  ],
+  mild:[
+    {em:'🥭',n:'Mango Tree',msg:"A pleasant day! Temperature comfortable, soil balanced. Perfect for growth.",r:0.88,p:0.85},
+    {em:'🌴',n:'Coconut Palm',msg:"Lovely weather! Warm enough for photosynthesis, cool enough for comfort.",r:0.92,p:0.95},
+    {em:'🌲',n:'Ashoka Tree',msg:"The gentle breeze carries my pollen far today. New seedlings will grow!",r:0.85,p:0.88},
+    {em:'🎋',n:'Indian Oak',msg:"Mild weather is ideal for my slow growth. I add a tiny ring to my trunk today.",r:0.88,p:0.82},
+  ],
+};
+let curWeather=null;
+function loadWeather(){
+  if(curWeather)return;
+  curWeather=WEATHER_CONDS[Math.floor(Math.random()*WEATHER_CONDS.length)];
+  document.getElementById('wIcon').textContent=curWeather.icon;
+  document.getElementById('wTemp').textContent=curWeather.temp;
+  document.getElementById('wCond').textContent=curWeather.cond;
+  document.getElementById('wHumid').textContent=curWeather.humid;
+  document.getElementById('wWind').textContent=curWeather.wind;
+  document.getElementById('wAqi').textContent=curWeather.aqi;
+  buildMoodCards();
+}
+function buildMoodCards(){
+  const moods=MOOD_MSGS[curWeather.type]||MOOD_MSGS.mild;
+  const box=document.getElementById('moodCards'); box.innerHTML='';
+  moods.forEach((m,i)=>{
+    const c=document.createElement('div'); c.className='mood-card';
+    c.innerHTML=`<div class="mood-em">${m.em}</div><div class="mood-tn">${m.n}</div><div class="mood-msg">"${m.msg}"</div><button class="mood-spk" id="mspk${i}" onclick="speakMood(${i})">Hear it speak</button>`;
+    box.appendChild(c);
+  });
+}
+function speakMood(i){
+  const moods=MOOD_MSGS[curWeather.type]||MOOD_MSGS.mild; const m=moods[i];
+  const btn=document.getElementById('mspk'+i); const card=btn.closest('.mood-card');
+  document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('spk'));
+  document.querySelectorAll('.mood-spk').forEach(b=>{b.classList.remove('on');b.textContent='Hear it speak';});
+  btn.classList.add('on'); btn.textContent='Speaking...'; card.classList.add('spk');
+  speak(m.msg,{rate:m.r,pitch:m.p,onend:()=>{btn.classList.remove('on');btn.textContent='Hear it speak';card.classList.remove('spk');}});
+}
+let moodIdx=0;
+function speakAllMoods(){
+  moodIdx=0; speakMoodSeq();
+}
+function speakMoodSeq(){
+  const moods=MOOD_MSGS[curWeather.type]||MOOD_MSGS.mild;
+  if(moodIdx>=moods.length)return;
+  const m=moods[moodIdx];
+  speak(`${m.n} says: ${m.msg}`,{rate:m.r,pitch:m.p,onend:()=>{moodIdx++;setTimeout(speakMoodSeq,400);}});
+}
+
+// ── CARBON ──
+function updateCarbon(){
+  const car=+document.getElementById('slCar').value,fly=+document.getElementById('slFly').value,meat=+document.getElementById('slMeat').value,home=+document.getElementById('slHome').value;
+  document.getElementById('cvCar').textContent=car+' km';
+  document.getElementById('cvFly').textContent=fly+' flights';
+  document.getElementById('cvMeat').textContent=meat+' meals';
+  document.getElementById('cvHome').textContent=home+' kWh';
+  const cCar=Math.round(car*52*0.1),cFly=Math.round(fly*300),cMeat=Math.round(meat*52*4),cHome=Math.round(home*12*0.2);
+  const total=cCar+cFly+cMeat+cHome;
+  document.getElementById('cTrees').textContent=Math.max(1,Math.round(total/200))+' Trees';
+  document.getElementById('cTotal').textContent='Total: '+total.toLocaleString()+' kg CO\u2082/year';
+  const mx=Math.max(cCar,cFly,cMeat,cHome,1);
+  const bv=(id,v,bg)=>{const e=document.getElementById(id);if(e){e.style.width=Math.round(v/mx*100)+'%';if(bg)e.style.background=bg;}};
+  bv('bbCar',cCar,'#2e7d32'); bv('bbFly',cFly,'#ef9a9a'); bv('bbMeat',cMeat,'#ffb74d'); bv('bbHome',cHome,'#81d4fa');
+  ['Car','Fly','Meat','Home'].forEach((k,idx)=>{const v=[cCar,cFly,cMeat,cHome][idx];const e=document.getElementById('bv'+k);if(e)e.textContent=v.toLocaleString()+' kg';});
+}
+
+// ── COMMUNITY ──
+function setSev(btn,cls){document.querySelectorAll('.sev-btn').forEach(b=>{b.className='sev-btn';}); btn.classList.add(cls);}
+function submitReport(){
+  const tree=document.getElementById('rTree').value.split(' —')[0];
+  const issue=document.getElementById('rIssue').value;
+  const feed=document.getElementById('reportFeed');
+  const item=document.createElement('div'); item.className='rep-item';
+  item.innerHTML=`<div style="font-size:14px;flex-shrink:0;margin-top:2px">&#x1F4CD;</div><div><div class="ri-t">${issue} — ${tree}</div><div class="ri-m">Just now</div><span class="ri-s rs-open">Open</span></div>`;
+  feed.prepend(item); document.getElementById('rDesc').value=''; addEco(30);
+  alert('Report submitted! +30 Eco Points earned.');
+}
+
+// ── LEAF AI ──
+const LEAF_DATA={
+  healthy:{icon:'✅',t:'Healthy Leaf',b:'Excellent health. Vibrant green coloration, no discoloration, intact surface. No treatment needed.',conf:94,tips:['Continue regular watering schedule','Ensure 6+ hours of direct sunlight daily']},
+  yellow:{icon:'⚠️',t:'Chlorosis Detected',b:'Iron or nitrogen deficiency. Leaf veins remain green while tissue has lost pigment — classic micronutrient deficiency.',conf:87,tips:['Apply iron chelate fertiliser to the soil','Check soil pH — should be 6.0–7.0']},
+  pest:{icon:'🐛',t:'Pest Damage',b:'Irregular holes and chewed edges indicate caterpillar or beetle feeding. Immediate treatment recommended.',conf:91,tips:['Apply neem oil spray in the evening','Inspect nearby trees for spread']},
+  fungal:{icon:'🍄',t:'Fungal Infection',b:'Brown circular spots with yellow halos — Cercospora or Alternaria. High humidity and poor air circulation are likely causes.',conf:89,tips:['Remove infected leaves immediately','Apply copper fungicide every 10 days for 3 weeks']},
+};
+function showLeafResult(type='healthy'){
+  const d=LEAF_DATA[type]||LEAF_DATA.healthy;
+  document.getElementById('leafIcon').textContent=d.icon;
+  document.getElementById('leafTitle').textContent=d.t;
+  document.getElementById('leafBody').textContent=d.b;
+  document.getElementById('confFill').style.width=d.conf+'%';
+  document.getElementById('confPct').textContent=d.conf+'%';
+  const ct=document.getElementById('careTips'); ct.innerHTML='';
+  d.tips.forEach(tip=>{const div=document.createElement('div');div.className='care-tip';div.textContent=tip;ct.appendChild(div);});
+  document.getElementById('leafResult').style.display='block';
+  speak(`${d.t}. ${d.b}`,{rate:0.9,pitch:0.9});
+}
+
+// ── TREE IDENTIFIER ──
+const TI_CONTENT={
+  overview:'The Mango tree is one of the most cultivated fruits in the tropics and subtropics. It grows up to 40 meters and lives over 300 years. India produces 40% of world mangoes. Absorbs 22 kg CO₂ per year.',
+  medicinal:'Mango leaves treat diabetes and high blood pressure. Bark used for dental care. Fruit rich in Vitamin C, A and antioxidants. Flowers used for urinary disorders.',
+  climate:'Tropical and subtropical zones. Temperature 24–38°C. Rainfall 750–2500mm/year. Drought tolerant once established. Reduces heat island effect.',
+  uses:'Food: fruit, pickles, juice, dried mango. Timber: furniture, plywood. Cultural: sacred in Hindu rituals, used in weddings. Industrial: tannin from bark.',
+  facts:'1. National fruit of India, Pakistan and Philippines. 2. Over 1000 varieties exist worldwide. 3. Mango is called the King of Fruits. 4. Ancient Indian literature mentions mangoes 4000 years ago.',
+};
+function switchTITab(tab,btn){
+  document.querySelectorAll('.ti-tab').forEach(b=>b.classList.remove('act')); btn.classList.add('act');
+  document.getElementById('tiContent').textContent=TI_CONTENT[tab]||'';
+}
+function showTreeIDResult(){
+  document.getElementById('tiResult').style.display='block';
+  speak('Mango Tree identified with 94% confidence. Mangifera indica. Native to India and South Asia.',{rate:0.9,pitch:0.85});
+}
+function speakTreeID(){
+  speak('This is the Mango Tree, scientifically known as Mangifera indica. Native to India and South Asia. It can grow up to 40 meters and live over 300 years. It absorbs 22 kilograms of carbon dioxide every year. Medicinally, mango leaves are used to treat diabetes. The fruit is rich in Vitamin C and antioxidants. India produces 40 percent of the world mangoes.',{rate:0.88,pitch:0.85});
+}
+
+// ── WORLD TREES ──
+const WT_DATA=[
+  {n:'Mango',l:'Mangifera indica',c:'India',cont:'Asia',clim:'Tropical',h:'10–40m',life:'300+ yrs',co2:'22 kg/yr',uses:'Fruit, timber, shade',med:'Digestive aid, antioxidant, treats diabetes',fact:"India produces 40% of world's mangoes! Called King of Fruits.",img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/200px-Hapus_Mango.jpg'},
+  {n:'Banyan',l:'Ficus benghalensis',c:'India',cont:'Asia',clim:'Tropical',h:'20–30m',life:'500+ yrs',co2:'22 kg/yr',uses:'Sacred, shade, medicine',med:'Treats diabetes, skin diseases',fact:'National tree of India. One tree can cover several acres!',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ficus_benghalensis_-_Banyan_tree_in_Kolkata.jpg/200px-Ficus_benghalensis_-_Banyan_tree_in_Kolkata.jpg'},
+  {n:'Neem',l:'Azadirachta indica',c:'India',cont:'Asia',clim:'Tropical',h:'15–20m',life:'200 yrs',co2:'17 kg/yr',uses:'Medicine, pesticide',med:'Antibacterial, antifungal, malaria treatment',fact:'Called Village Pharmacy in India — every part is medicinal!',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Neem_leaves.jpg/200px-Neem_leaves.jpg'},
+  {n:'Coconut Palm',l:'Cocos nucifera',c:'India',cont:'Asia',clim:'Tropical',h:'20–30m',life:'100 yrs',co2:'15 kg/yr',uses:'Food, oil, timber, fibre',med:'Coconut water for hydration, oil for skin',fact:'Called Tree of Life — every part is useful!',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconut_palm_at_Kovalam.jpg/200px-Coconut_palm_at_Kovalam.jpg'},
+  {n:'Baobab',l:'Adansonia digitata',c:'Africa',cont:'Africa',clim:'Savanna',h:'5–25m',life:'3000 yrs',co2:'10 kg/yr',uses:'Food, water, medicine',med:'Fruit has 6x more Vitamin C than oranges',fact:'Can store 120,000 litres of water! Called Tree of Life.',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Baobabs_near_Morondava.jpg/200px-Baobabs_near_Morondava.jpg'},
+  {n:'Giant Sequoia',l:'Sequoiadendron giganteum',c:'USA',cont:'N America',clim:'Temperate',h:'50–95m',life:'3200 yrs',co2:'900 kg/yr',uses:'Tourism, conservation',med:'Bark extract has antioxidant properties',fact:"Largest living organism on Earth by volume. Absorbs 900kg CO₂/year!",img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Redwood_National_Park%2C_fog_in_the_forest.jpg/200px-Redwood_National_Park%2C_fog_in_the_forest.jpg'},
+  {n:'Cherry Blossom',l:'Prunus serrulata',c:'Japan',cont:'Asia',clim:'Temperate',h:'5–15m',life:'40 yrs',co2:'8 kg/yr',uses:'Ornamental, food',med:'Bark treats coughs and skin ailments',fact:'Sakura — symbol of Japan. Bloom lasts only 2 weeks!',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/200px-Good_Food_Display_-_NCI_Visuals_Online.jpg'},
+  {n:'Olive Tree',l:'Olea europaea',c:'Greece',cont:'Europe',clim:'Mediterranean',h:'8–15m',life:'2000 yrs',co2:'6 kg/yr',uses:'Food, oil, wood',med:'Anti-inflammatory, heart-healthy olive oil',fact:'Some olive trees are 3000 years old and still producing fruit!',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Olive_tree_in_Chenoua.jpg/200px-Olive_tree_in_Chenoua.jpg'},
+];
+let wtFilter='All', wtSearch='', wtCurTree=null;
+function buildWT(){
+  const filters=['All','Asia','Africa','Europe','N America'];
+  const fbox=document.getElementById('wtFilters');
+  if(!fbox.children.length){
+    filters.forEach(f=>{const b=document.createElement('button');b.className='wt-f'+(f==='All'?' act':'');b.textContent=f;b.onclick=()=>{document.querySelectorAll('.wt-f').forEach(x=>x.classList.remove('act'));b.classList.add('act');wtFilter=f;renderWT();};fbox.appendChild(b);});
+  }
+  renderWT();
+}
+function filterWT(q){wtSearch=q;renderWT();}
+function renderWT(){
+  const grid=document.getElementById('wtGrid'); grid.innerHTML='';
+  WT_DATA.filter(t=>(wtFilter==='All'||t.cont===wtFilter)&&(!wtSearch||(t.n+t.c+t.clim).toLowerCase().includes(wtSearch.toLowerCase()))).forEach(t=>{
+    const c=document.createElement('div'); c.className='wt-card';
+    c.innerHTML=`<img class="wt-img" src="${t.img}" alt="${t.n}" onerror="this.style.height='60px';this.style.background='var(--surface2)'"/><div class="wt-n">${t.n}</div><div class="wt-l">${t.l}</div><div class="wt-tags"><span class="wt-tag">${t.clim}</span><span class="wt-tag">${t.c}</span></div>`;
+    c.onclick=()=>openWT(t); grid.appendChild(c);
+  });
+}
+function openWT(t){
+  wtCurTree=t;
+  document.getElementById('wtmImg').src=t.img;
+  document.getElementById('wtmName').textContent=t.n;
+  document.getElementById('wtmLat').textContent=t.l+' · '+t.c;
+  document.getElementById('wtmGrid').innerHTML=`<div class="wtm-stat"><div class="wtms-v">${t.h}</div><div class="wtms-l">Height</div></div><div class="wtm-stat"><div class="wtms-v">${t.life}</div><div class="wtms-l">Lifespan</div></div><div class="wtm-stat"><div class="wtms-v">${t.co2}</div><div class="wtms-l">CO₂/yr</div></div>`;
+  document.getElementById('wtmUses').textContent=t.uses;
+  document.getElementById('wtmMed').textContent=t.med;
+  document.getElementById('wtmFact').textContent=t.fact;
+  document.getElementById('wtModal').classList.add('show');
+}
+function closeWT(){document.getElementById('wtModal').classList.remove('show');}
+function speakWT(){if(!wtCurTree)return;speak(`The ${wtCurTree.n}, scientifically ${wtCurTree.l}, is native to ${wtCurTree.c}. It grows in ${wtCurTree.clim} climates, up to ${wtCurTree.h} tall, living ${wtCurTree.life}. It absorbs ${wtCurTree.co2} of carbon dioxide. ${wtCurTree.fact}`,{rate:0.88,pitch:0.85});}
+
+// ── LEADERBOARD ──
+const LB={
+  schools:[
+    {rank:'🥇',av:'🏫',n:'National Public School',m:'342 scans',pts:'8,420',badge:'Eco Champion',cls:'gold'},
+    {rank:'🥈',av:'🌿',n:'Baldwin Boys School',m:'280 scans',pts:'7,105',badge:'Tree Guardian',cls:'silver'},
+    {rank:'🥉',av:'🥭',n:'Izee Business School',m:'260 scans',pts:'5,200',badge:'Tree Guardian',cls:'bronze'},
+    {rank:'4',av:'🌳',n:'DPS Bangalore North',m:'210 scans',pts:'4,960',badge:'Green Hero',cls:''},
+    {rank:'5',av:'🌱',n:'Vidya Niketan School',m:'198 scans',pts:'4,320',badge:'Eco Warrior',cls:''},
+  ],
+  users:[
+    {rank:'🥇',av:'👩',n:'Priya Sharma',m:'Cubbon Park · 94 trees',pts:'3,840',badge:'Top Reporter',cls:'gold'},
+    {rank:'🥈',av:'👨',n:'Arjun Reddy',m:'Lalbagh · 87 trees',pts:'3,520',badge:'Leaf Scanner',cls:'silver'},
+    {rank:'🥉',av:'👩',n:'Divya Nair',m:'Ulsoor · 76 trees',pts:'3,120',badge:'Green Voice',cls:'bronze'},
+    {rank:'4',av:'👦',n:'Kiran Patel',m:'Koramangala · 68 trees',pts:'2,790',badge:'Eco Scout',cls:''},
+  ],
+  zones:[
+    {rank:'🥇',av:'🌳',n:'Cubbon Park Zone',m:'12 trees · 95% healthy',pts:'12,400',badge:'Greenest Zone',cls:'gold'},
+    {rank:'🥈',av:'🌺',n:'Lalbagh Zone',m:'9 trees · 89% healthy',pts:'9,850',badge:'Biodiversity Hub',cls:'silver'},
+    {rank:'🥉',av:'💧',n:'Ulsoor Lake Zone',m:'8 trees · 85% healthy',pts:'8,200',badge:'Water Guardian',cls:'bronze'},
+  ],
+};
+function buildLB(type){
+  const list=document.getElementById('lbList'); if(!list)return; list.innerHTML='';
+  (LB[type]||[]).forEach(item=>{
+    const d=document.createElement('div'); d.className='lb-item'+(item.cls?' '+item.cls:'');
+    d.innerHTML=`<div class="lb-rank">${item.rank}</div><div class="lb-av">${item.av}</div><div class="lb-info"><div class="lb-name">${item.n}</div><div class="lb-meta">${item.m}</div><span class="lb-badge">${item.badge}</span></div><div class="lb-pts">${item.pts}</div>`;
+    list.appendChild(d);
+  });
+}
+function switchLB(type,btn){document.querySelectorAll('.lb-tab').forEach(b=>b.classList.remove('act'));btn.classList.add('act');buildLB(type);}
+
+// ── BOOT ──
+buildTreeTabs();
+randomSensors();
+setInterval(randomSensors,5000);
+setTimeout(()=>addTreeMsg(TREES[0].greeting),300);
+buildLB('schools');
+window.speechSynthesis&&window.speechSynthesis.getVoices();
+</script>
+</body>
+</html>
